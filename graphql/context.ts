@@ -1,7 +1,7 @@
 // graphql/context.ts
 import { PrismaClient } from '@prisma/client';
 import prisma from '../lib/prisma';
-import { Claims, getSession } from '@auth0/nextjs-auth0';
+import { Claims, getSession, withApiAuthRequired } from '@auth0/nextjs-auth0';
 
 export type Context = {
   user?: Claims;
@@ -9,7 +9,10 @@ export type Context = {
   prisma: PrismaClient;
 };
 
-export async function createContext({ req, res }): Promise<Context> {
+export default withApiAuthRequired(async function createContext({
+  req,
+  res,
+}): Promise<Context> {
   const session = getSession(req, res);
 
   // if the user is not logged in, omit returning the user and accessToken
@@ -22,4 +25,4 @@ export async function createContext({ req, res }): Promise<Context> {
     accessToken,
     prisma,
   };
-}
+});
