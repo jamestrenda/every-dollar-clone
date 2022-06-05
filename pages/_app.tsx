@@ -1,11 +1,15 @@
-// import App from 'next/app'
+import { UserProvider } from '@auth0/nextjs-auth0';
 import type { AppProps } from 'next/app';
 import Layout from '../components/layout';
 
 function MyApp({ Component, pageProps }: AppProps) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    <UserProvider>
+      <Component {...pageProps} />
+    </UserProvider>
+  );
 }
 
 // Only uncomment this method if you have blocking data requirements for
