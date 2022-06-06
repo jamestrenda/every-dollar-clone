@@ -43,7 +43,7 @@ export default NextAuth({
       async authorize(credentials, req) {
         const { email, password } = credentials;
 
-        console.log({ credentials });
+        // console.log({ credentials });
         // 1. check if username/email exists
         const user = await prisma.user.findUnique({
           where: {
@@ -55,7 +55,7 @@ export default NextAuth({
           const compare = await bcrypt.compare(password, user.password);
           // TODO: return error message
           if (!compare) {
-            return false;
+            return null;
           }
 
           // 2. if user credentials are correct, set a token
@@ -182,12 +182,12 @@ export default NextAuth({
       //session.user['name'] = token.user['id'];
       session.user = token.user;
 
-      console.log('from session callback...', { session, token });
+      // console.log('from session callback...', { session, token });
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
       // console.log({ token, user, account, profile, isNewUser });
-      console.log('from jwt callback...', { user, token });
+      // console.log('from jwt callback...', { user, token });
       if (user) {
         return {
           ...token,
