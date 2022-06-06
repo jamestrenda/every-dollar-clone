@@ -1,0 +1,16 @@
+{
+  "env": {
+    "development": {
+      "presets": ["next/babel"],
+      "plugins": ["babel-plugin-macros", "superjson-next"]
+    },
+    "production": {
+      "presets": ["next/babel"],
+      "plugins": ["babel-plugin-macros", "superjson-next"]
+    },
+    "test": {
+      "presets": ["next/babel"],
+      "plugins": ["babel-plugin-macros", "superjson-next"]
+    }
+  }
+}
