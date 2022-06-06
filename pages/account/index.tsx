@@ -3,8 +3,9 @@ import { useUser } from '../../components/user';
 import SignOut from '../../components/signOut';
 
 export default function AccountPage({ data }) {
-  const user = useUser();
-  console.log({ user });
+  // const user = useUser();
+  const { user } = data;
+  // console.log({ user });
   return (
     <div>
       <h1>My Account</h1>
@@ -17,6 +18,7 @@ export default function AccountPage({ data }) {
 }
 
 export async function getServerSideProps(context) {
+  console.log({ context });
   const session = await getSession(context);
   console.log('from getServerSideProps...', { session });
   if (!session) {

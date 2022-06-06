@@ -176,10 +176,11 @@ export default NextAuth({
     //   return baseUrl;
     // },
     async session({ session, token }) {
-      session.user['accessToken'] = token.accessToken;
+      //session.user['accessToken'] = token.accessToken;
       // session.user.refreshToken = token.refreshToken;
-      session.user['accessTokenExpires'] = token.accessTokenExpires;
-      session.user['name'] = token.user['id'];
+      //session.user['accessTokenExpires'] = token.accessTokenExpires;
+      //session.user['name'] = token.user['id'];
+      session.user = token.user;
 
       console.log('from session callback...', { session, token });
       return session;
