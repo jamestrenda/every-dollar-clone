@@ -18,9 +18,8 @@ export default function AccountPage({ data }) {
 }
 
 export async function getServerSideProps(context) {
-  console.log({ context });
   const session = await getSession(context);
-  console.log('from getServerSideProps...', { session });
+
   if (!session) {
     return {
       redirect: {
