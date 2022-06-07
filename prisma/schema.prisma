@@ -43,7 +43,7 @@ model User {
   lastName      String?   @map("last_name")
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
-  password      String
+  password      String?
   image         String?
   // accounts      Account[]
   createdAt     DateTime  @default(now()) @map(name: "created_at")
@@ -56,6 +56,18 @@ model User {
 
   @@index([firstName, lastName], name: "full_name")
   @@map(name: "users")
+}
+
+model VerificationToken {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+
+  @@unique([identifier, token])
+  @@map(name: "verification_tokens")
 }
 
 enum Role {

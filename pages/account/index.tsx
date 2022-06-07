@@ -3,14 +3,17 @@ import { useUser } from '../../components/user';
 import SignOut from '../../components/signOut';
 
 export default function AccountPage({ data }) {
-  // const user = useUser();
   const { user } = data;
-  // console.log({ user });
+
   return (
     <div>
       <h1>My Account</h1>
       <div>
-        <div>{user?.firstName ? `Hi, ${user.firstName}!` : 'Welcome'}</div>
+        <div>
+          {user?.firstName
+            ? `Hi, ${user.firstName}!`
+            : `Signed in as ${user?.email}`}
+        </div>
       </div>
       <SignOut />
     </div>

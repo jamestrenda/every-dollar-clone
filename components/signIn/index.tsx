@@ -3,42 +3,51 @@ import { signIn } from 'next-auth/react';
 import useForm from '../../lib/useForm';
 import router from 'next/router';
 
-export default function SignIn() {
+export default function SignIn({ csrfToken }) {
   const { inputs, handleChange } = useForm({
     email: '',
+    emailCredentials: '',
     password: '',
   });
 
-  const [error, setError] = useState(null);
+  const [credentialsError, setCredentialsError] = useState(null);
 
-  const handleSubmit = async (e) => {
+  const handleEmail = async (e) => {
+    e.preventDefault();
+
+    const res = await signIn('email', {
+      email: inputs['email'],
+    });
+    console.log({ res });
+  };
+  const handleCredentials = async (e) => {
     e.preventDefault();
 
     const res = await signIn('sign-in-credentials', {
-      email: inputs['email'],
+      email: inputs['emailCredentials'],
       password: inputs['password'],
       redirect: false,
     });
     console.log({ res });
     if (res?.error) {
-      setError(
+      setCredentialsError(
         'Invalid username/password. Please check your credentials and try again.'
       );
     } else {
-      setError(null);
+      setCredentialsError(null);
       if (res.ok) router.push('/account');
     }
   };
   return (
     <>
-      {error && <p>{error}</p>}
-      <form method="post" onSubmit={handleSubmit}>
+      {credentialsError && <p>{credentialsError}</p>}
+      <form method="post" onSubmit={handleCredentials}>
         <label>
           <input
-            name="email"
+            name="emailCredentials"
             type="email"
             placeholder="Email"
-            value={inputs['email']}
+            value={inputs['emailCredentials']}
             onChange={handleChange}
           />
         </label>
@@ -55,9 +64,26 @@ export default function SignIn() {
         <button
           type="submit"
           disabled={
-            (inputs['password'] === '' || inputs['email'] === '') ?? false
+            (inputs['password'] === '' || inputs['emailCredentials'] === '') ??
+            false
           }
         >
+          Sign In
+        </button>
+      </form>
+      {/* {emailError && <p>{emailError}</p>} */}
+      <form method="post" onSubmit={handleEmail}>
+        <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+        <label>
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={inputs['email']}
+            onChange={handleChange}
+          />
+        </label>
+        <button type="submit" disabled={inputs['email'] === '' ?? false}>
           Sign In
         </button>
       </form>

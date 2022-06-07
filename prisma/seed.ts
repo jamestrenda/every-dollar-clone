@@ -3,15 +3,15 @@ const prisma = new PrismaClient();
 
 async function main() {
   // console.log('Truncating and resetting sequences...');
-  // await prisma.$queryRaw`truncate users restart identity;`;
+  // await prisma.$queryRaw`truncate Verification_Tokens restart identity;`;
 
   console.log('Creating a new user...');
-  await prisma.user.create({
-    data: {
-      email: `james@trenda.dev`,
-      role: 'SUPER_ADMIN',
-    },
-  });
+  // await prisma.user.create({
+  //   data: {
+  //     email: `james@trenda.dev`,
+  //     role: 'SUPER_ADMIN',
+  //   },
+  // });
 }
 
 main()
