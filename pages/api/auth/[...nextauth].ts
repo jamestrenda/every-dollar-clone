@@ -5,6 +5,8 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import { VerifyEmailHtml } from '../../../components/email/verify';
 
 const prisma = new PrismaClient();
 
@@ -32,14 +34,30 @@ export default NextAuth({
     EmailProvider({
       id: 'email',
       server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        service: 'Postmark', // no need to set host or port etc.
         auth: {
           user: process.env.EMAIL_SERVER_USER,
           pass: process.env.EMAIL_SERVER_PASSWORD,
         },
       },
       from: process.env.EMAIL_FROM,
+      async sendVerificationRequest({
+        identifier: email,
+        url,
+        provider: { server, from },
+      }) {
+        const { host } = new URL(url);
+        const appName = process.env.APP_NAME;
+        const transport = nodemailer.createTransport(server);
+        await transport.sendMail({
+          to: email,
+          from,
+          subject: `Password-free sign-in link for ${appName}`,
+          text: text({ url, host, appName }),
+          html: html({ url, host, appName, email }),
+        });
+      },
+      secret: process.env.NEXTAUTH_SECRET,
     }),
     CredentialsProvider({
       id: 'sign-in-credentials',
@@ -167,7 +185,7 @@ export default NextAuth({
     signIn: '/account/sign-in',
     signOut: '/account/sign-out',
     // error: '/auth/error', // Error code passed in query string as ?error=
-    // verifyRequest: '/auth/verify-request', // (used for check email message)
+    verifyRequest: '/account/verify-email', // (used for check email message)
     // newUser: '/account/welcome', // New users will be directed here on first sign in
   },
   session: {
@@ -215,3 +233,42 @@ export default NextAuth({
     },
   },
 });
+
+// Email HTML body
+function html({
+  url,
+  host,
+  appName,
+  email,
+}: Record<'url' | 'host' | 'appName' | 'email', string>) {
+  // Insert invisible space into domains and email address to prevent both the
+  // email address and the domain from being turned into a hyperlink by email
+  // clients like Outlook and Apple mail, as this is confusing because it seems
+  // like they are supposed to click on their email address to sign in.
+  const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
+  const escapedHost = `${host.replace(/\./g, '&#8203;.')}`;
+
+  // Some simple styling options
+  const options = {
+    appName,
+    url,
+    backgroundColor: '#000',
+    textColor: '#444444',
+    mainBackgroundColor: '#fafafa',
+    buttonBackgroundColor: '#346df1',
+    buttonBorderColor: '#346df1',
+    buttonTextColor: '#ffffff',
+    fontFamily: 'Helvetica, Arial, sans-serif',
+  };
+
+  return `${VerifyEmailHtml(options)}`;
+}
+
+// Email Text body (fallback for email clients that don't render HTML, e.g. feature phones)
+function text({
+  url,
+  host,
+  appName,
+}: Record<'url' | 'host' | 'appName', string>) {
+  return `Password-free sign-in link for ${appName}\n\nSimply paste the URL below into a web browser to sign in to your account. This URL will expire in 24 hours and can only be used once.\n\n${url}\n\n`;
+}
