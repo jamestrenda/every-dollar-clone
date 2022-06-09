@@ -7,6 +7,7 @@ import {
 } from 'next-auth/react';
 import useForm from '../lib/useForm';
 import router from 'next/router';
+import Link from 'next/link';
 
 export default function SignUp() {
   // console.log({ session, csrfToken, providers });
@@ -24,6 +25,20 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // since the password field is optional due to the use of other auth providers,
+    // let's do some client-side validation here for the credentials provider.
+    // we're also checking this field on the backend inside our provider callback,
+    // but let's try to enforce this as soon as possible.
+    if (!inputs['password'] || inputs['passowrd'] == '') {
+      setError('Oops! You forgot to set a password.');
+      return false;
+    }
+    // TODO: create a password check section that updates automatically as users type in a password
+    // if (inputs['password'].length < 12) {
+    //   setError('Passwords must be a least 12 characters long.');
+    //   return false;
+    // }
+
     const res = await signIn('sign-up-credentials', {
       firstName: inputs['firstName'],
       lastName: inputs['lastName'],
@@ -31,19 +46,27 @@ export default function SignUp() {
       password: inputs['password'],
       redirect: false,
     });
-    console.log({ res });
     if (res?.error) {
       setError(res.error);
     } else {
-      setError(null);
-      // if (res.ok) router.push('/account');
+      router.push('/account');
     }
   };
   return (
     <>
-      {error && <p>{error}</p>}
+      {error && (
+        <>
+          <p>{error}</p>
+          <p>
+            If you'd prefer to sign up without creating a password, go to the{' '}
+            <Link href="/account/sign-in">
+              <a>Sign In</a>
+            </Link>{' '}
+            page and choose one of our password-less sign-in options.
+          </p>
+        </>
+      )}
       <form method="post" onSubmit={handleSubmit}>
-        {/* <input name="csrfToken" type="hidden" defaultValue={csrfToken} /> */}
         <label>
           <input
             name="firstName"
@@ -105,6 +128,23 @@ export default function SignUp() {
       </form>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/account',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }
 
 // This is the recommended way for Next.js 9.3 or newer

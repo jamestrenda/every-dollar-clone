@@ -132,6 +132,8 @@ export default NextAuth({
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
 
+        // console.log({ req });
+
         const { firstName, lastName, email, password } = credentials;
 
         // 1. check if username/email exists
@@ -139,17 +141,13 @@ export default NextAuth({
           where: {
             email,
           },
-          // select: {
-          //   password: false,
-          // },
         });
-        // TODO: return error message
-        if (existingUser) {
-          // not throwing an error for some reason
-          // console.log({ existingUser });
-          // throw new Error('The e-mail you provided is already taken.');
-          return null;
-        }
+        if (existingUser) return null;
+
+        // make sure a password was submitted when using this provider.
+        // we're enforcing this on the frontend by disabling the submit button,
+        // as well as using client-side validation, but just in case...
+        if (!password || password == '') return null;
 
         // 2. if user does NOT exist, create it
         const hash = await bcrypt.hash(password, 14);
@@ -213,18 +211,11 @@ export default NextAuth({
     //   return baseUrl;
     // },
     async session({ session, token }) {
-      //session.user['accessToken'] = token.accessToken;
-      // session.user.refreshToken = token.refreshToken;
-      //session.user['accessTokenExpires'] = token.accessTokenExpires;
-      //session.user['name'] = token.user['id'];
-      session.user = token.user;
-      console.log({ session, token });
-      // console.log('from session callback...', { session, token });
-      return session;
+      const { user } = token;
+
+      return { ...session, user };
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      // console.log({ token, user, account, profile, isNewUser });
-      // console.log('from jwt callback...', { user, token });
       if (user) {
         return {
           ...token,

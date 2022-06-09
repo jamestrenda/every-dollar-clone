@@ -1,5 +1,4 @@
 import { getSession } from 'next-auth/react';
-import { useUser } from '../../components/user';
 import SignOut from '../../components/signOut';
 
 export default function AccountPage({ data }) {

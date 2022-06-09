@@ -3,6 +3,7 @@ import { signIn } from 'next-auth/react';
 import useForm from '../../lib/useForm';
 import router from 'next/router';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export default function SignIn({ csrfToken }) {
   const { inputs, handleChange } = useForm({
@@ -25,9 +26,6 @@ export default function SignIn({ csrfToken }) {
 
   const handleGoogle = async (e) => {
     const res = await signIn('google');
-    console.log({ res });
-
-    // if (res?.ok) router.push('/account');
   };
   const handleEmail = async (e) => {
     e.preventDefault();
@@ -39,6 +37,10 @@ export default function SignIn({ csrfToken }) {
   const handleCredentials = async (e) => {
     e.preventDefault();
 
+    if (!inputs['password'] || inputs['password'] == '') {
+      setErrors('Oops! You forgot to enter your password.');
+    }
+
     const res = await signIn('sign-in-credentials', {
       email: inputs['emailCredentials'],
       password: inputs['password'],
@@ -49,14 +51,17 @@ export default function SignIn({ csrfToken }) {
       setErrors(
         'Invalid username/password. Please check your credentials and try again.'
       );
+    } else {
+      setErrors(null);
+      if (res.ok) router.push('/account');
     }
-    // else {
-    //   setErrors(null);
-    //   if (res.ok) router.push('/account');
-    // }
   };
   return (
     <>
+      <Link href="/">
+        <a>Home</a>
+      </Link>
+      <h1>Sign in to your account.</h1>
       {errors && <p>{errors}</p>}
       <form method="post" onSubmit={handleCredentials}>
         <label>
@@ -88,6 +93,7 @@ export default function SignIn({ csrfToken }) {
           Sign In
         </button>
       </form>
+      <h2>Password-less Sign-In Options</h2>
       {/* {emailError && <p>{emailError}</p>} */}
       <form method="post" onSubmit={handleEmail}>
         <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
@@ -104,11 +110,10 @@ export default function SignIn({ csrfToken }) {
           Sign In
         </button>
       </form>
-      {/* <form method="POST" action="/api/auth/signin"> */}
+
       <button type="button" onClick={handleGoogle}>
         Google
       </button>
-      {/* </form> */}
     </>
   );
 }

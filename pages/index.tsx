@@ -6,6 +6,10 @@ function HomePage() {
       <h1>Welcome to Next.js!</h1>
       <Link href="/account/sign-in">
         <a>Sign In</a>
+      </Link>{' '}
+      or{' '}
+      <Link href="/sign-up">
+        <a>Sign Up</a>
       </Link>
     </div>
   );
