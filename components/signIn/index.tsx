@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import useForm from '../../lib/useForm';
 import router from 'next/router';
+import { useRouter } from 'next/router';
 
 export default function SignIn({ csrfToken }) {
   const { inputs, handleChange } = useForm({
@@ -10,15 +11,30 @@ export default function SignIn({ csrfToken }) {
     password: '',
   });
 
-  const [credentialsError, setCredentialsError] = useState(null);
+  const { query } = useRouter();
+  const [errors, setErrors] = useState(null);
 
+  useEffect(() => {
+    const { error } = query;
+    if (error === 'OAuthAccountNotLinked') {
+      setErrors(
+        'The email you are using to sign in with is already linked to another account. Please try a different e-mail or sign in with the existing account.'
+      );
+    }
+  }, [query]);
+
+  const handleGoogle = async (e) => {
+    const res = await signIn('google');
+    console.log({ res });
+
+    // if (res?.ok) router.push('/account');
+  };
   const handleEmail = async (e) => {
     e.preventDefault();
 
     const res = await signIn('email', {
       email: inputs['email'],
     });
-    console.log({ res });
   };
   const handleCredentials = async (e) => {
     e.preventDefault();
@@ -28,19 +44,20 @@ export default function SignIn({ csrfToken }) {
       password: inputs['password'],
       redirect: false,
     });
-    console.log({ res });
+
     if (res?.error) {
-      setCredentialsError(
+      setErrors(
         'Invalid username/password. Please check your credentials and try again.'
       );
-    } else {
-      setCredentialsError(null);
-      if (res.ok) router.push('/account');
     }
+    // else {
+    //   setErrors(null);
+    //   if (res.ok) router.push('/account');
+    // }
   };
   return (
     <>
-      {credentialsError && <p>{credentialsError}</p>}
+      {errors && <p>{errors}</p>}
       <form method="post" onSubmit={handleCredentials}>
         <label>
           <input
@@ -87,6 +104,11 @@ export default function SignIn({ csrfToken }) {
           Sign In
         </button>
       </form>
+      {/* <form method="POST" action="/api/auth/signin"> */}
+      <button type="button" onClick={handleGoogle}>
+        Google
+      </button>
+      {/* </form> */}
     </>
   );
 }

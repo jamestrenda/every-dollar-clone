@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import EmailProvider from 'next-auth/providers/email';
+import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
@@ -58,6 +59,11 @@ export default NextAuth({
         });
       },
       secret: process.env.NEXTAUTH_SECRET,
+    }),
+    GoogleProvider({
+      id: 'google',
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     CredentialsProvider({
       id: 'sign-in-credentials',
@@ -212,7 +218,7 @@ export default NextAuth({
       //session.user['accessTokenExpires'] = token.accessTokenExpires;
       //session.user['name'] = token.user['id'];
       session.user = token.user;
-
+      console.log({ session, token });
       // console.log('from session callback...', { session, token });
       return session;
     },
