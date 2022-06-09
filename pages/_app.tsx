@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import { client } from '../lib/apollo';
 import Layout from '../components/layout';
+import '../lib/tailwind.css';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   // Use the layout defined at the page level, if available
