@@ -47,7 +47,18 @@ export default function SignUp() {
       redirect: false,
     });
     if (res?.error) {
-      setError(res.error);
+      setError(
+        <>
+          <p>
+            <strong>Uh oh! We were unable to create your account.</strong>
+          </p>
+          <p>
+            You are trying to sign up with an email that is already associated
+            with another account or the password you entered did not meet our
+            password criteria. Please correct these issues and try again.
+          </p>
+        </>
+      );
     } else {
       router.push('/account');
     }
