@@ -147,7 +147,7 @@ export default NextAuth({
         // make sure a password was submitted when using this provider.
         // we're enforcing this on the frontend by disabling the submit button,
         // as well as using client-side validation, but just in case...
-        if (!password || password == '') return null;
+        if (!password || password.trim() == '') return null;
 
         // 2. if user does NOT exist, create it
         const hash = await bcrypt.hash(password, 14);
