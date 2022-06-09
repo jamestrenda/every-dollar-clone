@@ -24,9 +24,6 @@ export default function SignIn({ csrfToken }) {
     }
   }, [query]);
 
-  const handleGoogle = async (e) => {
-    const res = await signIn('google');
-  };
   const handleEmail = async (e) => {
     e.preventDefault();
 
@@ -111,7 +108,20 @@ export default function SignIn({ csrfToken }) {
         </button>
       </form>
 
-      <button type="button" onClick={handleGoogle}>
+      <button
+        type="button"
+        onClick={async (e) => {
+          const res = await signIn('facebook');
+        }}
+      >
+        Facebook
+      </button>
+      <button
+        type="button"
+        onClick={async (e) => {
+          const res = await signIn('google');
+        }}
+      >
         Google
       </button>
     </>
