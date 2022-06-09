@@ -107,15 +107,6 @@ export default function SignIn({ csrfToken }) {
           Sign In
         </button>
       </form>
-
-      <button
-        type="button"
-        onClick={async (e) => {
-          const res = await signIn('facebook');
-        }}
-      >
-        Facebook
-      </button>
       <button
         type="button"
         onClick={async (e) => {
