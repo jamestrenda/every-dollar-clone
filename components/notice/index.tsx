@@ -1,4 +1,8 @@
-import { IoIosCloseCircle, IoIosAlert } from 'react-icons/io';
+import {
+  IoIosCloseCircle,
+  IoIosAlert,
+  IoIosCheckmarkCircle,
+} from 'react-icons/io';
 
 export const Notice = ({
   type,
@@ -10,13 +14,21 @@ export const Notice = ({
   return (
     <div
       className={`${
-        type === 'error' ? 'bg-red-100' : type === 'info' ? 'bg-indigo-100' : ''
+        type === 'error'
+          ? 'bg-red-100'
+          : type === 'success'
+          ? 'bg-green-100'
+          : type === 'info'
+          ? 'bg-indigo-100'
+          : ''
       } px-5 py-4 my-5 flex`}
     >
       <div
         className={`mt-1 mr-3 ${
           type === 'error'
             ? 'text-red-700'
+            : type === 'success'
+            ? 'text-green-700'
             : type === 'info'
             ? 'text-indigo-700'
             : ''
@@ -24,11 +36,16 @@ export const Notice = ({
       >
         {type === 'error' && <IoIosCloseCircle size="20" fill="currentColor" />}
         {type === 'info' && <IoIosAlert size="20" fill="currentColor" />}
+        {type === 'success' && (
+          <IoIosCheckmarkCircle size="20" fill="currentColor" />
+        )}
       </div>
       <p
         className={`${
           type === 'error'
             ? 'text-red-700'
+            : type === 'success'
+            ? 'text-green-700'
             : type === 'info'
             ? 'text-indigo-700'
             : ''
