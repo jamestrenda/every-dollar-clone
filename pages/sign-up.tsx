@@ -1,20 +1,33 @@
 import { useState } from 'react';
-import {
-  getProviders,
-  signIn,
-  getCsrfToken,
-  getSession,
-} from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
+import styled from 'styled-components';
+import tw from 'twin.macro';
 import useForm from '../lib/useForm';
 import router from 'next/router';
 import Link from 'next/link';
 import { Button } from '../components/button';
 import { Logo } from '../components/logo';
-import { IoIosCloseCircle, IoIosAlert } from 'react-icons/io';
+import { Notice } from '../components/notice';
+
+export const StyledField = styled.div(
+  ({ className }: { className: string }) => [tw`block`, className && className]
+);
+
+export const StyledInput = styled.input`
+  ${StyledField}:first-of-type & {
+    ${tw`rounded-t-md`}
+  }
+  ${StyledField}:last-of-type & {
+    ${tw`rounded-b-md`}
+  }
+  ${tw`appearance-none rounded-none relative block w-full px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm`}
+`;
+
+export const StyledForm = styled.form`
+  ${tw`space-y-6 grid mb-5`}
+`;
 
 export default function SignUp() {
-  // console.log({ session, csrfToken, providers });
-
   const { inputs, handleChange } = useForm({
     firstName: '',
     lastName: '',
@@ -73,105 +86,112 @@ export default function SignUp() {
     <div className="p-8">
       <Link href="/">
         <a>
-          <Logo />
+          <Logo className="justify-center" />
         </a>
       </Link>
 
       <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
-        Sign Up For a Free Account
+        Open a Free Account
       </h1>
-      <h2 className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-2">
-        Great decision. But don't stop now.
-      </h2>
-      <p className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-12">
-        Create an account and start telling your money what to do.
+      <p className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-2 max-w-md mx-auto">
+        Great decision. But don't stop now. Sign up today and start telling your
+        money what to do.
       </p>
       <div className="max-w-lg mx-auto">
         {error && (
           <>
-            <div className="bg-red-100 p-8 mb-5 flex">
-              <div className="mt-1 mr-3 text-red-700">
-                <IoIosCloseCircle size="20" fill="currentColor" />
-              </div>
-              <p className="text-red-700">{error}</p>
-            </div>
-            <div className="bg-indigo-100 p-8 mb-5 flex">
-              <div className="mt-1 mr-3 text-indigo-700">
-                <IoIosAlert size="20" fill="currentColor" />
-              </div>
-              <p className="text-indigo-700">
-                If you'd prefer to sign up without a password, visit the{' '}
-                <Link href="/account/sign-in">
-                  <a className="text-black underline">Sign In</a>
-                </Link>{' '}
-                page and choose one of our password-less sign-in options.
-              </p>
-            </div>
+            <Notice type="error" message={error} />
+            <Notice
+              type="info"
+              message={
+                <>
+                  If you'd prefer to sign up without a password, visit the{' '}
+                  <Link href="/account/sign-in">
+                    <a className="text-black underline">Sign In</a>
+                  </Link>{' '}
+                  page and choose one of our password-less sign-in options.
+                </>
+              }
+            />
           </>
         )}
-        <form
-          method="post"
-          onSubmit={handleSubmit}
-          className="grid place-items-center gap-4 grid-cols-2"
-        >
-          <label className="w-full">
-            <input
-              name="firstName"
-              type="text"
-              placeholder="First Name (optional)"
-              value={inputs['firstName']}
-              onChange={handleChange}
-              className="w-full"
-            />
-          </label>
-          <label className="w-full">
-            <input
-              name="lastName"
-              type="text"
-              placeholder="Last Name (optional)"
-              value={inputs['lastName']}
-              onChange={handleChange}
-              className="w-full"
-            />
-          </label>
-          <label className="w-full col-span-2">
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={inputs['email']}
-              onChange={handleChange}
-              className="w-full"
-              required
-            />
-          </label>
-          <label className="w-full">
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={inputs['password']}
-              onChange={handleChange}
-              autoComplete="new-password"
-              className="w-full"
-              required
-            />
-          </label>
-          <label className="w-full">
-            <input
-              name="confirm"
-              type="password"
-              placeholder="Confirm Password"
-              value={inputs['confirm']}
-              onChange={handleChange}
-              autoComplete="new-password"
-              className="w-full"
-            />
-          </label>
-          <Button type="submit" className="col-span-2" disabled={isDisabled()}>
+
+        <StyledForm method="post" onSubmit={handleSubmit} className="mt-8">
+          <div className="rounded-md shadow-sm -space-y-px">
+            <StyledField>
+              <label htmlFor="firstName" className="sr-only">
+                First Name
+              </label>
+              <StyledInput
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="First Name (optional)"
+                value={inputs['firstName']}
+                onChange={handleChange}
+              />
+            </StyledField>
+            <StyledField>
+              <label htmlFor="lastName" className="sr-only">
+                Last Name
+              </label>
+              <StyledInput
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Last Name (optional)"
+                value={inputs['lastName']}
+                onChange={handleChange}
+              />
+            </StyledField>
+            <StyledField>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
+              <StyledInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={inputs['email']}
+                onChange={handleChange}
+                required
+              />
+            </StyledField>
+            <StyledField>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
+              <StyledInput
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={inputs['password']}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+            </StyledField>
+            <StyledField>
+              <label htmlFor="confirm" className="sr-only">
+                Re-Type Password
+              </label>
+              <StyledInput
+                id="confirm"
+                name="confirm"
+                type="password"
+                placeholder="Confirm Password"
+                value={inputs['confirm']}
+                onChange={handleChange}
+                autoComplete="new-password"
+              />
+            </StyledField>
+          </div>
+          <Button type="submit" disabled={isDisabled()}>
             Create Account
           </Button>
-        </form>
+        </StyledForm>
       </div>
     </div>
   );

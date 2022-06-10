@@ -6,7 +6,7 @@ function HomePage() {
   return (
     <div className="bg-indigo-900 relative p-5">
       <div className="flex justify-between items-center">
-        <Logo />
+        <Logo responsive />
         <Button
           href="/account/sign-in"
           // className={tw`bg-indigo-500 hover:bg-opacity-90`}
