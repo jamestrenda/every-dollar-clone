@@ -1,4 +1,7 @@
 // import App from 'next/app'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 import { ApolloProvider } from '@apollo/client';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
@@ -6,7 +9,32 @@ import { client } from '../lib/apollo';
 import Layout from '../components/layout';
 import '../lib/tailwind.css';
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+// function Loading() {
+//   const router = useRouter();
+//   const [loading, setLoading] = useState(false);
+//   useEffect(() => {
+//     const handleStart = (url) => setLoading(true);
+//     const handleComplete = (url) => setLoading(false);
+
+//     router.events.on('routeChangeStart', handleStart);
+//     router.events.on('routeChangeComplete', handleComplete);
+//     router.events.on('routeChangeError', handleComplete);
+
+//     return () => {
+//       router.events.off('routeChangeStart', handleStart);
+//       router.events.off('routeChangeComplete', handleComplete);
+//       router.events.off('routeChangeError', handleComplete);
+//     };
+//   });
+
+//   return loading && <p>Loading...</p>;
+// }
+
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+  router,
+}: AppProps) {
   // Use the layout defined at the page level, if available
   const getLayout =
     Component.getLayout ||
@@ -17,7 +45,26 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </ApolloProvider>
       </SessionProvider>
     ));
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    <>
+      {/* <Loading /> */}
+      <motion.div
+        key={router.route}
+        initial="pageInitial"
+        animate="pageAnimate"
+        variants={{
+          pageInitial: {
+            opacity: 0,
+          },
+          pageAnimate: {
+            opacity: 1,
+          },
+        }}
+      >
+        <Component {...pageProps} />
+      </motion.div>
+    </>
+  );
 }
 
 // Only uncomment this method if you have blocking data requirements for
