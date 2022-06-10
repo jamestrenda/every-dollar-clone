@@ -8,6 +8,9 @@ import {
 import useForm from '../lib/useForm';
 import router from 'next/router';
 import Link from 'next/link';
+import { Button } from '../components/button';
+import { Logo } from '../components/logo';
+import { IoIosCloseCircle, IoIosAlert } from 'react-icons/io';
 
 export default function SignUp() {
   // console.log({ session, csrfToken, providers });
@@ -21,6 +24,11 @@ export default function SignUp() {
   });
 
   const [error, setError] = useState(null);
+
+  const isDisabled = () =>
+    inputs['password'] === '' ||
+    inputs['confirm'] === '' ||
+    inputs['password'] !== inputs['confirm'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,11 +59,9 @@ export default function SignUp() {
         <>
           <p>
             <strong>Uh oh! We were unable to create your account.</strong>
-          </p>
-          <p>
-            You are trying to sign up with an email that is already associated
-            with another account or the password you entered did not meet our
-            password criteria. Please correct these issues and try again.
+            <br />
+            Please try a different email or make sure your password meets our
+            password criteria.
           </p>
         </>
       );
@@ -64,80 +70,110 @@ export default function SignUp() {
     }
   };
   return (
-    <>
-      {error && (
-        <>
-          <p>{error}</p>
-          <p>
-            If you'd prefer to sign up without creating a password, go to the{' '}
-            <Link href="/account/sign-in">
-              <a>Sign In</a>
-            </Link>{' '}
-            page and choose one of our password-less sign-in options.
-          </p>
-        </>
-      )}
-      <form method="post" onSubmit={handleSubmit}>
-        <label>
-          <input
-            name="firstName"
-            type="text"
-            placeholder="First Name"
-            value={inputs['firstName']}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          <input
-            name="lastName"
-            type="text"
-            placeholder="Last Name"
-            value={inputs['lastName']}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={inputs['email']}
-            onChange={handleChange}
-          />
-        </label>
-        <label>
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={inputs['password']}
-            onChange={handleChange}
-            autoComplete="new-password"
-          />
-        </label>
-        <label>
-          <input
-            name="confirm"
-            type="password"
-            placeholder="Confirm Password"
-            value={inputs['confirm']}
-            onChange={handleChange}
-            autoComplete="new-password"
-          />
-        </label>
-        <button
-          type="submit"
-          disabled={
-            (inputs['password'] === '' ||
-              inputs['confirm'] === '' ||
-              inputs['password'] !== inputs['confirm']) ??
-            false
-          }
+    <div className="p-8">
+      <Link href="/">
+        <a>
+          <Logo />
+        </a>
+      </Link>
+
+      <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
+        Sign Up For a Free Account
+      </h1>
+      <h2 className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-2">
+        Great decision. But don't stop now.
+      </h2>
+      <p className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-12">
+        Create an account and start telling your money what to do.
+      </p>
+      <div className="max-w-lg mx-auto">
+        {error && (
+          <>
+            <div className="bg-red-100 p-8 mb-5 flex">
+              <div className="mt-1 mr-3 text-red-700">
+                <IoIosCloseCircle size="20" fill="currentColor" />
+              </div>
+              <p className="text-red-700">{error}</p>
+            </div>
+            <div className="bg-indigo-100 p-8 mb-5 flex">
+              <div className="mt-1 mr-3 text-indigo-700">
+                <IoIosAlert size="20" fill="currentColor" />
+              </div>
+              <p className="text-indigo-700">
+                If you'd prefer to sign up without a password, visit the{' '}
+                <Link href="/account/sign-in">
+                  <a className="text-black underline">Sign In</a>
+                </Link>{' '}
+                page and choose one of our password-less sign-in options.
+              </p>
+            </div>
+          </>
+        )}
+        <form
+          method="post"
+          onSubmit={handleSubmit}
+          className="grid place-items-center gap-4 grid-cols-2"
         >
-          Create Account
-        </button>
-      </form>
-    </>
+          <label className="w-full">
+            <input
+              name="firstName"
+              type="text"
+              placeholder="First Name (optional)"
+              value={inputs['firstName']}
+              onChange={handleChange}
+              className="w-full"
+            />
+          </label>
+          <label className="w-full">
+            <input
+              name="lastName"
+              type="text"
+              placeholder="Last Name (optional)"
+              value={inputs['lastName']}
+              onChange={handleChange}
+              className="w-full"
+            />
+          </label>
+          <label className="w-full col-span-2">
+            <input
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={inputs['email']}
+              onChange={handleChange}
+              className="w-full"
+              required
+            />
+          </label>
+          <label className="w-full">
+            <input
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={inputs['password']}
+              onChange={handleChange}
+              autoComplete="new-password"
+              className="w-full"
+              required
+            />
+          </label>
+          <label className="w-full">
+            <input
+              name="confirm"
+              type="password"
+              placeholder="Confirm Password"
+              value={inputs['confirm']}
+              onChange={handleChange}
+              autoComplete="new-password"
+              className="w-full"
+            />
+          </label>
+          <Button type="submit" className="col-span-2" disabled={isDisabled()}>
+            Create Account
+          </Button>
+        </form>
+      </div>
+    </div>
   );
 }
 
