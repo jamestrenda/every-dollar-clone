@@ -8,11 +8,11 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Logo } from '../logo';
 import { Button } from '../button';
-import { FcGoogle } from 'react-icons/fc';
 import { FaApple, FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
 import { StyledField, StyledForm, StyledInput } from '../../pages/sign-up';
 import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
+import { Spinner } from '../Spinner';
 
 const StyledProviderButton = styled.button`
   ${tw`bg-white shadow-sm rounded-md border-solid border border-gray-200 appearance-none h-10 w-10 grid place-items-center hover:bg-indigo-500 hover:text-white transition`}
@@ -26,14 +26,23 @@ export default function SignIn({ csrfToken }) {
   });
 
   const { query } = useRouter();
+  console.log({ query });
   const [errors, setErrors] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const { error } = query;
+
     if (error === 'OAuthAccountNotLinked') {
       setErrors(
         'The email you are using to sign in with is already linked to another account. Please try a different e-mail or sign in with the existing account.'
       );
+    } else if (error === 'EmailSignin') {
+      setEmailError(
+        'There was a problem with the e-mail you entered. Please try a different e-mail or choose a different sign-in option.'
+      );
+    } else {
     }
   }, [query]);
 
@@ -47,10 +56,13 @@ export default function SignIn({ csrfToken }) {
   const handleCredentials = async (e) => {
     e.preventDefault();
 
+    // setLoading(true);
     if (!inputs['password'] || inputs['password'] == '') {
       setErrors('Oops! You forgot to enter your password.');
+      return false;
     }
 
+    setLoading(true);
     const res = await signIn('sign-in-credentials', {
       email: inputs['emailCredentials'],
       password: inputs['password'],
@@ -58,6 +70,7 @@ export default function SignIn({ csrfToken }) {
     });
 
     if (res?.error) {
+      setLoading(false);
       setErrors(
         'Invalid username/password. Please check your credentials and try again.'
       );
@@ -119,13 +132,12 @@ export default function SignIn({ csrfToken }) {
               false
             }
           >
-            Sign In
+            {loading ? <Spinner /> : 'Sign In'}
           </Button>
         </StyledForm>
         <div className="">
           <TextDivider text="Or sign in without a password" />
-          {/* <h2 className="italic text-center font-medium mt-8 mb-0"></h2> */}
-          {/* {emailError && <p>{emailError}</p>} */}
+          {emailError && <Notice type="error" message={emailError} />}
           <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
             <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
             <StyledField className="!mt-0">
@@ -139,7 +151,7 @@ export default function SignIn({ csrfToken }) {
                 placeholder="Email Address"
                 value={inputs['email']}
                 onChange={handleChange}
-                className="w-full"
+                // required
               />
             </StyledField>
             <Button type="submit" disabled={inputs['email'] === '' ?? false}>
