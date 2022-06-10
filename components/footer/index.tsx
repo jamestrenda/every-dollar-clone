@@ -18,7 +18,7 @@ export const Footer = () => {
         life. However, you absolutely <em>should</em> budget in real life. 🙂
       </p>
       <p>
-        By using this app, you agree not to hold me, James Trenda, liable for
+        By using this app, you agree to not hold me, James Trenda, liable for
         anything at all. The source code for this project can be found on my{' '}
         <Link
           href="https://github.com/jamestrenda/every-dollar-clone"
