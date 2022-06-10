@@ -1,18 +1,18 @@
-import { ButtonLink } from '../components/buttonLink';
-import Link from 'next/link';
 import { Logo } from '../components/logo';
+import { Button } from '../components/button';
+import tw from 'twin.macro';
 
 function HomePage() {
   return (
     <div className="bg-indigo-900 relative p-5">
       <div className="flex justify-between items-center">
         <Logo />
-        <ButtonLink
+        <Button
           href="/account/sign-in"
-          className="bg-indigo-500 hover:bg-opacity-90"
+          // className={tw`bg-indigo-500 hover:bg-opacity-90`}
         >
           Sign In
-        </ButtonLink>
+        </Button>
       </div>
       <div className="max-w-6xl mx-auto px-0 pt-24 pb-8 md:px-12 md:py-44 sm:text-center ">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-indigo-200 mb-5 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mt-5">
@@ -21,12 +21,12 @@ function HomePage() {
         <p className="text-xl italic md:text-xl lg:text-2xl font-bold text-white mb-16">
           Budget confidently with EveryDollar (<em>Ahem...</em>Clone)
         </p>
-        <ButtonLink
+        <Button
           href="/sign-up"
-          className="bg-indigo-500  hover:bg-opacity-90"
+          // className={tw`bg-indigo-500 hover:bg-opacity-90`}
         >
           Start Budgeting For Free
-        </ButtonLink>
+        </Button>
         {/* <p className="text-md text-green-300 italic mt-5">
           Already crushing it?{' '}
           <Link href="/account/sign-in">
