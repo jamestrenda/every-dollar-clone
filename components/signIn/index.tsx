@@ -14,7 +14,7 @@ import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
 import { Spinner } from '../Spinner';
 
-const StyledProviderButton = styled.button`
+export const StyledProviderButton = styled.button`
   ${tw`bg-white shadow-sm rounded-md border-solid border border-gray-200 appearance-none h-10 w-10 grid place-items-center hover:bg-indigo-500 hover:text-white transition`}
 `;
 
@@ -26,7 +26,7 @@ export default function SignIn({ csrfToken }) {
   });
 
   const { query } = useRouter();
-  console.log({ query });
+
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
