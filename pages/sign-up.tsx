@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import { signIn, getSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { signIn, getSession, getCsrfToken } from 'next-auth/react';
 import styled from 'styled-components';
 import tw from 'twin.macro';
 import useForm from '../lib/useForm';
-import router from 'next/router';
+import router, { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Button } from '../components/button';
 import { Logo } from '../components/logo';
 import { Notice } from '../components/notice';
+import { StyledProviderButton } from '../components/signIn';
+import { FaGoogle } from 'react-icons/fa';
+import { TextDivider } from '../components/divider/text';
+import { Spinner } from '../components/Spinner';
 
 export const StyledField = styled.div(
   ({ className }: { className: string }) => [tw`block`, className && className]
@@ -27,7 +31,7 @@ export const StyledForm = styled.form`
   ${tw`space-y-6 grid mb-5`}
 `;
 
-export default function SignUp() {
+export default function SignUp({ csrfToken }) {
   const { inputs, handleChange } = useForm({
     firstName: '',
     lastName: '',
@@ -36,13 +40,34 @@ export default function SignUp() {
     confirm: '',
   });
 
-  const [error, setError] = useState(null);
+  const { query } = useRouter();
+  const [errors, setErrors] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+
+  useEffect(() => {
+    const { error } = query;
+
+    if (error === 'EmailSignin') {
+      setEmailError(
+        'There was a problem with the e-mail you entered. Please try a different e-mail or choose a different sign-in option.'
+      );
+    }
+  }, [query]);
 
   const isDisabled = () =>
     inputs['password'] === '' ||
     inputs['confirm'] === '' ||
     inputs['password'] !== inputs['confirm'];
 
+  const handleEmail = async (e) => {
+    e.preventDefault();
+    setLoadingEmail(true);
+    const res = await signIn('email', {
+      email: inputs['email'],
+    });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -51,7 +76,7 @@ export default function SignUp() {
     // we're also checking this field on the backend inside our provider callback,
     // but let's try to enforce this as soon as possible.
     if (!inputs['password'] || inputs['passowrd'] == '') {
-      setError('Oops! You forgot to set a password.');
+      setErrors('Oops! You forgot to set a password.');
       return false;
     }
     // TODO: create a password check section that updates automatically as users type in a password
@@ -60,6 +85,7 @@ export default function SignUp() {
     //   return false;
     // }
 
+    setLoading(true);
     const res = await signIn('sign-up-credentials', {
       firstName: inputs['firstName'],
       lastName: inputs['lastName'],
@@ -68,7 +94,8 @@ export default function SignUp() {
       redirect: false,
     });
     if (res?.error) {
-      setError(
+      setLoading(false);
+      setErrors(
         <>
           <p>
             <strong>Uh oh! We were unable to create your account.</strong>
@@ -98,9 +125,9 @@ export default function SignUp() {
         money what to do.
       </p>
       <div className="max-w-lg mx-auto">
-        {error && (
+        {errors && (
           <>
-            <Notice type="error" message={error} />
+            <Notice type="error" message={errors} />
             <Notice
               type="info"
               message={
@@ -189,9 +216,76 @@ export default function SignUp() {
             </StyledField>
           </div>
           <Button type="submit" disabled={isDisabled()}>
-            Create Account
+            {loading ? <Spinner /> : 'Create Account'}
           </Button>
         </StyledForm>
+        <div className="">
+          <TextDivider text="Or sign in without a password" />
+          {emailError && <Notice type="error" message={emailError} />}
+          <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+            <StyledField className="!mt-0">
+              <label htmlFor="email" className="sr-only">
+                E-mail Address
+              </label>
+              <StyledInput
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                value={inputs['email']}
+                onChange={handleChange}
+                // required
+              />
+            </StyledField>
+            <Button type="submit" disabled={inputs['email'] === '' ?? false}>
+              {loadingEmail ? <Spinner /> : 'Sign In With E-Mail'}
+            </Button>
+          </StyledForm>
+        </div>
+        <TextDivider text="Or continue with" />
+        <div className="text-gray-500 flex items-center justify-center gap-2">
+          {/* <StyledProviderButton
+            type="button"
+            onClick={async (e) => {
+              const res = await signIn('apple');
+            }}
+            title="Sign in with Apple"
+          >
+            <span className="sr-only">Sign In With Apple</span>
+            <FaApple size="20" fill="currentColor" />
+          </StyledProviderButton> */}
+          {/* <StyledProviderButton
+            type="button"
+            onClick={async (e) => {
+              const res = await signIn('facebook');
+            }}
+            title="Sign in with Facebook"
+          >
+            <FaFacebook size="20" fill="currentColor" />
+            <span className="sr-only">Sign In With Facebook</span>
+          </StyledProviderButton> */}
+          {/* <StyledProviderButton
+            type="button"
+            onClick={async (e) => {
+              const res = await signIn('github');
+            }}
+            title="Sign in with Github"
+          >
+            <FaGithub size="20" fill="currentColor" />
+            <span className="sr-only">Sign In With Github</span>
+          </StyledProviderButton> */}
+          <StyledProviderButton
+            type="button"
+            title="Sign in with Google"
+            onClick={async (e) => {
+              const res = await signIn('google');
+            }}
+          >
+            <FaGoogle size="20" fill="currentColor" />
+            <span className="sr-only">Sign In With Google</span>
+          </StyledProviderButton>
+        </div>
       </div>
     </div>
   );
@@ -199,6 +293,7 @@ export default function SignUp() {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
+  const csrfToken = await getCsrfToken(context);
 
   if (session) {
     return {
@@ -210,7 +305,7 @@ export async function getServerSideProps(context) {
   }
 
   return {
-    props: {},
+    props: { csrfToken },
   };
 }
 
