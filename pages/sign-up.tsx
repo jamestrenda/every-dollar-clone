@@ -11,7 +11,7 @@ import { Notice } from '../components/notice';
 import { StyledProviderButton } from '../components/signIn';
 import { FaGoogle } from 'react-icons/fa';
 import { TextDivider } from '../components/divider/text';
-import { Spinner } from '../components/Spinner';
+import { Spinner } from '../components/spinner';
 
 export const StyledField = styled.div(
   ({ className }: { className: string }) => [tw`block`, className && className]
