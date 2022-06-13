@@ -1,2 +1,6 @@
 import { signOut } from 'next-auth/react';
-export default () => <button onClick={() => signOut()}>Sign Out</button>;
+export default ({ className }: { className: string }) => (
+  <button className={className} onClick={() => signOut()}>
+    Sign Out
+  </button>
+);

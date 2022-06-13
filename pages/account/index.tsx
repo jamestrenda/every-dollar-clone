@@ -9,13 +9,8 @@ export default function AccountPage() {
     <div>
       <h1>My Account</h1>
       <div>
-        <div>
-          {session.user?.firstName
-            ? `Hi, ${session.user?.firstName}!`
-            : `Signed in as ${session.user?.email}`}
-        </div>
+        <div></div>
       </div>
-      <SignOut />
     </div>
   ) : (
     <Spinner />
