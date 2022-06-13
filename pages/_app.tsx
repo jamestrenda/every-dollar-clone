@@ -1,5 +1,5 @@
 // import App from 'next/app'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactElement, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { ApolloProvider } from '@apollo/client';
@@ -9,6 +9,7 @@ import { client } from '../lib/apollo';
 import Layout from '../components/layout';
 import '../lib/tailwind.css';
 import { ModalStateProvider } from '../components/modalStateProvider';
+import { NextPage } from 'next';
 
 // function Loading() {
 //   const router = useRouter();
@@ -31,42 +32,47 @@ import { ModalStateProvider } from '../components/modalStateProvider';
 //   return loading && <p>Loading...</p>;
 // }
 
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
 function MyApp({
   Component,
   pageProps: { session, ...pageProps },
   router,
-}: AppProps) {
+}: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
-  const getLayout =
-    Component.getLayout ||
-    ((page) => (
-      <SessionProvider session={session}>
-        <ApolloProvider client={client}>
-          <ModalStateProvider>
-            <Layout>{page}</Layout>
-          </ModalStateProvider>
-        </ApolloProvider>
-      </SessionProvider>
-    ));
-  return getLayout(
-    <>
-      {/* <Loading /> */}
-      <motion.div
-        key={router.route}
-        initial="pageInitial"
-        animate="pageAnimate"
-        variants={{
-          pageInitial: {
-            opacity: 0,
-          },
-          pageAnimate: {
-            opacity: 1,
-          },
-        }}
-      >
-        <Component {...pageProps} />
-      </motion.div>
-    </>
+  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
+  return (
+    <SessionProvider session={session}>
+      <ApolloProvider client={client}>
+        <ModalStateProvider>
+          {getLayout(
+            <>
+              <motion.div
+                key={router.route}
+                initial="pageInitial"
+                animate="pageAnimate"
+                variants={{
+                  pageInitial: {
+                    opacity: 0,
+                  },
+                  pageAnimate: {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <Component {...pageProps} />
+              </motion.div>
+            </>
+          )}
+        </ModalStateProvider>
+      </ApolloProvider>
+    </SessionProvider>
   );
 }
 

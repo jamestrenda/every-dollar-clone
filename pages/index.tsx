@@ -3,8 +3,8 @@ import { Logo } from '../components/logo';
 import { Button } from '../components/button';
 import styled from 'styled-components';
 import { useModal } from '../components/modalStateProvider';
-import SignIn from '../components/signIn';
 import { getCsrfToken, getSession, useSession } from 'next-auth/react';
+import { SignInSignUp } from '../components/signInSignUp';
 
 const StyledHomepageBanner = styled.div`
   background-image: url('/gray-10-dot-brush-bottom.svg');
@@ -37,7 +37,7 @@ function HomePage({ csrfToken }) {
             onClick={() =>
               setModal({
                 visible: true,
-                message: <SignIn csrfToken={csrfToken} />,
+                message: <SignInSignUp show="SignIn" csrfToken={csrfToken} />,
                 type: null,
               })
             }
@@ -53,7 +53,21 @@ function HomePage({ csrfToken }) {
         <p className="text-xl italic md:text-xl lg:text-2xl font-bold text-white mb-16">
           Budget confidently with EveryDollar (<em>Ahem...</em>Clone)
         </p>
-        <Button href="/sign-up">Start Budgeting For Free</Button>
+        {status === 'authenticated' ? (
+          <Button href="/budget">Pick up Where You Left Off</Button>
+        ) : (
+          <Button
+            onClick={() =>
+              setModal({
+                visible: true,
+                message: <SignInSignUp show="SignUp" csrfToken={csrfToken} />,
+                type: null,
+              })
+            }
+          >
+            Start Budgeting For Free
+          </Button>
+        )}
       </div>
     </StyledHomepageBanner>
   );

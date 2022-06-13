@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Logo } from '../logo';
 import { Button } from '../button';
 import { FaApple, FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
-import { StyledField, StyledForm, StyledInput } from '../../pages/sign-up';
+import { StyledField, StyledForm, StyledInput } from '../../components/signUp';
 import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
 import { Spinner } from '../spinner';
@@ -19,7 +19,7 @@ export const StyledProviderButton = styled.button`
   ${tw`bg-white shadow-sm rounded-md border-solid border border-gray-200 appearance-none h-10 w-10 grid place-items-center hover:bg-indigo-500 hover:text-white transition`}
 `;
 
-export default function SignIn({ csrfToken }) {
+export default function SignIn({ csrfToken }: { csrfToken: string }) {
   const { inputs, handleChange } = useForm({
     email: '',
     emailCredentials: '',
@@ -82,7 +82,7 @@ export default function SignIn({ csrfToken }) {
     }
   };
   return (
-    <div className="p-8 pb-12">
+    <div className="p-8">
       {/* <Link href="/">
         <a>
           <Logo className="justify-center" />
@@ -100,13 +100,13 @@ export default function SignIn({ csrfToken }) {
           <div className="rounded-md shadow-sm -space-y-px">
             <StyledField>
               <label htmlFor="emailCredentials" className="sr-only">
-                E-mail Address or Username
+                Email
               </label>
               <StyledInput
                 id="emailCredentials"
                 name="emailCredentials"
                 type="email"
-                placeholder="Email or Username"
+                placeholder="Email"
                 value={inputs['emailCredentials']}
                 onChange={handleChange}
               />
@@ -138,7 +138,7 @@ export default function SignIn({ csrfToken }) {
           </Button>
         </StyledForm>
         <div className="">
-          <TextDivider text="Or sign in without a password" />
+          <TextDivider text="Or continue password-free" />
           {emailError && <Notice type="error" message={emailError} />}
           <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
             <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
