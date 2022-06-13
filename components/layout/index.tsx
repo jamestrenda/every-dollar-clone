@@ -1,6 +1,8 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import tw from 'twin.macro';
 import { Footer } from '../footer';
+import { Modal } from '../modal';
+import { useModal } from '../modalStateProvider';
 const GlobalStyles = createGlobalStyle`
   html {
     // custom-properties
@@ -12,11 +14,15 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Layout = ({ children }) => {
+  const {
+    modal: { visible: isModalVisible },
+  } = useModal();
   return (
     <>
       <GlobalStyles />
       <main className="bg-white">{children}</main>
       <Footer />
+      {isModalVisible && <Modal />}
     </>
   );
 };

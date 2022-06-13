@@ -8,6 +8,7 @@ import { SessionProvider } from 'next-auth/react';
 import { client } from '../lib/apollo';
 import Layout from '../components/layout';
 import '../lib/tailwind.css';
+import { ModalStateProvider } from '../components/modalStateProvider';
 
 // function Loading() {
 //   const router = useRouter();
@@ -41,7 +42,9 @@ function MyApp({
     ((page) => (
       <SessionProvider session={session}>
         <ApolloProvider client={client}>
-          <Layout>{page}</Layout>
+          <ModalStateProvider>
+            <Layout>{page}</Layout>
+          </ModalStateProvider>
         </ApolloProvider>
       </SessionProvider>
     ));

@@ -12,7 +12,8 @@ import { FaApple, FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
 import { StyledField, StyledForm, StyledInput } from '../../pages/sign-up';
 import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
-import { Spinner } from '../Spinner';
+import { Spinner } from '../spinner';
+import { useModal } from '../modalStateProvider';
 
 export const StyledProviderButton = styled.button`
   ${tw`bg-white shadow-sm rounded-md border-solid border border-gray-200 appearance-none h-10 w-10 grid place-items-center hover:bg-indigo-500 hover:text-white transition`}
@@ -26,7 +27,7 @@ export default function SignIn({ csrfToken }) {
   });
 
   const { query } = useRouter();
-
+  const { resetModal } = useModal();
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -76,22 +77,23 @@ export default function SignIn({ csrfToken }) {
       );
     } else {
       setErrors(null);
+      resetModal();
       if (res.ok) router.push('/account');
     }
   };
   return (
     <div className="p-8 pb-12">
-      <Link href="/">
+      {/* <Link href="/">
         <a>
           <Logo className="justify-center" />
         </a>
-      </Link>
-      <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
+      </Link> */}
+      {/* <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
         Welcome Back!
       </h1>
       <h2 className="text-xl italic text-center md:text-xl lg:text-2xl font-medium mb-8 lg:mb-12">
         Sign in to your existing account.
-      </h2>
+      </h2> */}
       <div className="max-w-md mx-auto">
         {errors && <Notice type="error" message={errors} />}
         <StyledForm method="post" onSubmit={handleCredentials}>
