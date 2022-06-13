@@ -1,21 +1,24 @@
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import SignOut from '../../components/signOut';
+import { Spinner } from '../../components/spinner';
 
-export default function AccountPage({ data }) {
-  const { user } = data;
+export default function AccountPage() {
+  const { data: session, status } = useSession();
 
-  return (
+  return status === 'authenticated' ? (
     <div>
       <h1>My Account</h1>
       <div>
         <div>
-          {user?.firstName
-            ? `Hi, ${user.firstName}!`
-            : `Signed in as ${user?.email}`}
+          {session.user?.firstName
+            ? `Hi, ${session.user?.firstName}!`
+            : `Signed in as ${session.user?.email}`}
         </div>
       </div>
       <SignOut />
     </div>
+  ) : (
+    <Spinner />
   );
 }
 
@@ -32,7 +35,7 @@ export async function getServerSideProps(context) {
   }
 
   return {
-    props: { data: session },
+    props: {},
   };
 }
 // AccountPage.auth = {

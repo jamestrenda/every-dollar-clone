@@ -96,13 +96,28 @@ export default NextAuth({
           }
 
           // 2. if user credentials are correct, set a token
-          const token = await jwt.sign(
-            { jwt: user.id },
-            process.env.NEXTAUTH_SECRET
-          );
+          // const token = await jwt.sign(
+          //   { jwt: user.id },
+          //   process.env.NEXTAUTH_SECRET
+          // );
 
-          user['token'] = token;
+          // user['token'] = token;
 
+          // console.log('from next-auth', { user });
+          // return {
+          //   id: user.id,
+          //   firstName: user.firstName,
+          //   lastName: user.lastName,
+          //   name: user.name,
+          //   email: user.email,
+          //   emailVerified: user.emailVerified,
+          //   image: user.image,
+          //   isAdmin: user.isAdmin,
+          //   role: user.role,
+          //   onboarded: user.onboarded,
+          //   accounts: user.accounts,
+          // };
+          delete user.password;
           return user;
         }
         return null;
@@ -167,6 +182,7 @@ export default NextAuth({
             onboarded: true,
             image: true,
             role: true,
+            accounts: true,
           },
         });
 
@@ -213,6 +229,9 @@ export default NextAuth({
     async session({ session, token }) {
       const { user } = token;
 
+      delete user.password;
+      delete user.createdAt;
+      delete user.updatedAt;
       return { ...session, user };
     },
     async jwt({ token, user, account, profile, isNewUser }) {

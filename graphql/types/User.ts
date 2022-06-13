@@ -7,8 +7,8 @@ import {
   intArg,
 } from 'nexus';
 import { connectionFromArraySlice, cursorToOffset } from 'graphql-relay';
-import { Transaction } from './Transaction';
-import { Budget } from './Budget';
+// import { Transaction } from './Transaction';
+// import { Budget } from './Budget';
 // import { Session } from './Session';
 import { Account } from './Account';
 
@@ -27,6 +27,18 @@ export const User = objectType({
     t.nonNull.dateTime('updatedAt');
     t.string('image');
     t.nonNull.string('role');
+    t.list.field('accounts', {
+      type: Account,
+      async resolve(parent, _args, ctx) {
+        return await ctx.prisma.user
+          .findUnique({
+            where: {
+              id: parent.id,
+            },
+          })
+          .accounts();
+      },
+    });
   },
 });
 
