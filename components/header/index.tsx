@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { RiExchangeDollarFill } from 'react-icons/ri';
-import { Nav } from '../Nav';
-import { UtilityNav } from '../Nav/utility';
-import { UserNav } from '../Nav/user';
+import { Nav } from '../nav';
+import { UtilityNav } from '../nav/utility';
+import { UserNav } from '../nav/user';
 
 const Header = () => {
   return (
@@ -16,8 +16,8 @@ const Header = () => {
       <div className="flex flex-col flex-grow border-t border-b border-gray-200">
         <Nav />
         <UtilityNav />
+        <UserNav />
       </div>
-      <UserNav />
     </header>
   );
 };

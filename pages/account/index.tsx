@@ -6,12 +6,12 @@ export default function AccountPage() {
   const { data: session, status } = useSession();
 
   return status === 'authenticated' ? (
-    <div>
+    <>
       <h1>My Account</h1>
       <div>
         <div></div>
       </div>
-    </div>
+    </>
   ) : (
     <Spinner />
   );
