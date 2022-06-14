@@ -1,5 +1,4 @@
 import { getSession, useSession } from 'next-auth/react';
-import SignOut from '../../components/signOut';
 import { Spinner } from '../../components/spinner';
 
 export default function AccountPage() {
@@ -7,9 +6,9 @@ export default function AccountPage() {
 
   return status === 'authenticated' ? (
     <>
-      <h1>My Account</h1>
-      <div>
-        <div></div>
+      <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 mx-auto text-center">
+        <h1 className="">My Account</h1>
+        <p>(Coming Soon)</p>
       </div>
     </>
   ) : (

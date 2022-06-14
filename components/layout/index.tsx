@@ -36,10 +36,12 @@ const Layout = ({ children }) => {
           {/* {modal.visible && <Modal />} */}
         </div>
       ) : (
-        <main className="bg-white">{children}</main>
+        <>
+          <main className="bg-white">{children}</main>
+          <Footer />
+        </>
       )}
 
-      <Footer />
       {isModalVisible && <Modal />}
     </>
   );

@@ -1,5 +1,6 @@
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { MdLogout } from 'react-icons/md';
 import { RiUserFill } from 'react-icons/ri';
 import SignOut from '../signOut';
 
@@ -8,7 +9,7 @@ export const UserNav = () => {
   // const loading = status === 'loading';
 
   return (
-    <div className="px-5 py-4 xl:p-7 xl:py-3 grid gap-5 xl:grid-cols-2">
+    <div className="px-5 py-4 xl:p-7 xl:py-3 xl:flex border-t border-solid border-gray-200">
       <div className="flex justify-center xl:justify-start">
         <Link href="/account">
           <a>
@@ -24,8 +25,12 @@ export const UserNav = () => {
           </a>
         </Link>
       </div>
-      {/* <div className="hidden sm:block">{session?.user.email}</div> */}
-      <SignOut className="text-indigo-500 text-sm" />
+      <div className="xl:ml-5">
+        <div className="hidden xl:block overflow-hidden xl:max-w-[18rem] text-ellipsis">
+          {session?.user.email}
+        </div>
+        <SignOut className="text-indigo-500 text-sm mt-3 xl:mt-0" />
+      </div>
     </div>
   );
 };
