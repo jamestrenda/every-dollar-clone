@@ -25,11 +25,14 @@ function HomePage({ csrfToken }) {
   //   ),
   // });
 
+  // I wasn't originally doing a redirect on the homepage if a user was logged in,
+  // so the session logic is irrelevant now, but I'm going to leave it for right now
+  // in case I change my mind
+
   return (
     <StyledHomepageBanner className="bg-indigo-900 p-5">
       <div className="flex justify-between items-center">
         <Logo responsive />
-        {/* <Button href="/account/sign-in">Sign In</Button> */}
         {status === 'authenticated' ? (
           <p>Account</p>
         ) : (
@@ -80,12 +83,19 @@ export async function getServerSideProps(context) {
   const session = await getSession(context);
   const csrfToken = await getCsrfToken(context);
 
+  // bypass the homepage if user session exists
   if (session) {
     return {
-      props: {
-        session,
+      redirect: {
+        destination: '/account',
+        permanent: false,
       },
     };
+    // return {
+    //   props: {
+    //     session,
+    //   },
+    // };
   }
 
   return {
