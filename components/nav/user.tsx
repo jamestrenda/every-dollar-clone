@@ -12,7 +12,7 @@ export const UserNav = () => {
     <div className="px-5 py-4 xl:p-7 xl:py-3 xl:flex border-t border-solid border-gray-200">
       <div className="flex justify-center xl:justify-start">
         <Link href="/account">
-          <a>
+          <a className="max-w-[50px]">
             {session?.user.image ? (
               <img
                 src={session.user.image}
