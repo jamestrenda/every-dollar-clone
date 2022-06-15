@@ -10,26 +10,23 @@ const StyledFooter = styled.div`
 
 export const Footer = () => {
   return (
-    <StyledFooter className="max-w-xl mx-auto border-t border-gray-200 text-center p-12 text-sm text-gray-400">
+    <StyledFooter className="max-w-2xl mx-auto border-t border-gray-200 text-center p-12 text-xs text-gray-400">
       <h3 className="text-md uppercase font-bold mb-5">Disclaimer</h3>
-      <p className="">
-        Hello, my name is James Trenda and this is a Next.js app. This app is
-        for demonstration purposes only and is not intended to be used in real
-        life. However, you absolutely <em>should</em> budget in real life. 🙂
-      </p>
-      <p>
-        By using this app, you agree to not hold me, James Trenda, liable for
-        anything at all. The source code for this project can be found on my{' '}
-        <Link
+      <p className="text-justify">
+        Hello, I'm James. This is a Next.js app for demonstration purposes only
+        and is not intended to be used in real life. However, you probably{' '}
+        <em>should</em> budget in real life. 🙂 By using this app, you agree to
+        not hold me, James Trenda, liable for anything at all. The source code
+        for this project can be found on my{' '}
+        <a
           href="https://github.com/jamestrenda/every-dollar-clone"
           target="_blank"
+          className="text-black hover:text-indigo-500 transition border-b border-solid border-black hover:border-indigo-500"
         >
-          <a className="hover:text-black transition border-b border-solid border-black border-opacity-0 hover:border-opacity-100">
-            Github
-          </a>
-        </Link>{' '}
-        account. Feel free to peruse the repo and shoot me any questions you may
-        have. If you're a developer, I also welcome your feedback.
+          Github
+        </a>{' '}
+        account. Feel free to peruse the repo. If you're a developer, I welcome
+        your feedback.
       </p>
     </StyledFooter>
   );
