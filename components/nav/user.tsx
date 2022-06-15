@@ -14,7 +14,11 @@ export const UserNav = () => {
         <Link href="/account">
           <a>
             {session?.user.image ? (
-              <img src={session.user.image} alt="profile pic" />
+              <img
+                src={session.user.image}
+                alt="profile pic"
+                className="rounded-full"
+              />
             ) : session?.user.full_name?.slice(1) ? (
               <span>{session.user.firstName}</span>
             ) : (
