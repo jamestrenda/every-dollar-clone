@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Button } from '../button';
 import { Notice } from '../notice';
 import { StyledProviderButton } from '../signIn';
-import { FaGoogle } from 'react-icons/fa';
+import { FaFacebookF, FaGoogle } from 'react-icons/fa';
 import { TextDivider } from '../divider/text';
 import { Spinner } from '../spinner';
 
@@ -35,6 +35,7 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     firstName: '',
     lastName: '',
     email: '',
+    emailCredentials: '',
     password: '',
     confirm: '',
   });
@@ -88,7 +89,7 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     const res = await signIn('sign-up-credentials', {
       firstName: inputs['firstName'],
       lastName: inputs['lastName'],
-      email: inputs['email'],
+      email: inputs['emailCredentials'],
       password: inputs['password'],
       redirect: false,
     });
@@ -96,12 +97,10 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
       setLoading(false);
       setErrors(
         <>
-          <p>
-            <strong>Uh oh! We were unable to create your account.</strong>
-            <br />
-            Please try a different email or make sure your password meets our
-            password criteria.
-          </p>
+          <strong>Uh oh! We were unable to create your account.</strong>
+          <br />
+          Please try a different email or make sure your password meets our
+          password criteria.
         </>
       );
     } else {
@@ -162,15 +161,15 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
               />
             </StyledField> */}
             <StyledField>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="emailCredentials" className="sr-only">
                 Email address
               </label>
               <StyledInput
-                id="email"
-                name="email"
+                id="emailCredentials"
+                name="emailCredentials"
                 type="email"
                 placeholder="Email"
-                value={inputs['email']}
+                value={inputs['emailCredentials']}
                 onChange={handleChange}
                 required
               />
@@ -245,16 +244,16 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
             <span className="sr-only">Sign In With Apple</span>
             <FaApple size="20" fill="currentColor" />
           </StyledProviderButton> */}
-          {/* <StyledProviderButton
+          <StyledProviderButton
             type="button"
             onClick={async (e) => {
               const res = await signIn('facebook');
             }}
             title="Sign in with Facebook"
           >
-            <FaFacebook size="20" fill="currentColor" />
+            <FaFacebookF size="20" fill="currentColor" />
             <span className="sr-only">Sign In With Facebook</span>
-          </StyledProviderButton> */}
+          </StyledProviderButton>
           {/* <StyledProviderButton
             type="button"
             onClick={async (e) => {

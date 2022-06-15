@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
+import FacebookProvider from 'next-auth/providers/facebook';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
@@ -65,6 +66,11 @@ export default NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    FacebookProvider({
+      id: 'facebook',
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    }),
     CredentialsProvider({
       id: 'sign-in-credentials',
       // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -95,29 +101,6 @@ export default NextAuth({
             return null;
           }
 
-          // 2. if user credentials are correct, set a token
-          // const token = await jwt.sign(
-          //   { jwt: user.id },
-          //   process.env.NEXTAUTH_SECRET
-          // );
-
-          // user['token'] = token;
-
-          // console.log('from next-auth', { user });
-          // return {
-          //   id: user.id,
-          //   firstName: user.firstName,
-          //   lastName: user.lastName,
-          //   name: user.name,
-          //   email: user.email,
-          //   emailVerified: user.emailVerified,
-          //   image: user.image,
-          //   isAdmin: user.isAdmin,
-          //   role: user.role,
-          //   onboarded: user.onboarded,
-          //   accounts: user.accounts,
-          // };
-          delete user.password;
           return user;
         }
         return null;
@@ -138,6 +121,7 @@ export default NextAuth({
         password: { type: 'password' },
       },
       async authorize(credentials, req) {
+        console.log({ credentials });
         // You need to provide your own logic here that takes the credentials
         // submitted and returns either an object representing a user
         // or a value that is false/null if the credentials are invalid.
