@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Logo } from '../logo';
 import { Button } from '../button';
-import { FaApple, FaFacebook, FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaApple, FaGoogle, FaGithub, FaFacebookF } from 'react-icons/fa';
 import { StyledField, StyledForm, StyledInput } from '../../components/signUp';
 import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
@@ -174,16 +174,16 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
             <span className="sr-only">Sign In With Apple</span>
             <FaApple size="20" fill="currentColor" />
           </StyledProviderButton> */}
-          {/* <StyledProviderButton
+          <StyledProviderButton
             type="button"
             onClick={async (e) => {
               const res = await signIn('facebook');
             }}
             title="Sign in with Facebook"
           >
-            <FaFacebook size="20" fill="currentColor" />
+            <FaFacebookF size="20" fill="currentColor" />
             <span className="sr-only">Sign In With Facebook</span>
-          </StyledProviderButton> */}
+          </StyledProviderButton>
           {/* <StyledProviderButton
             type="button"
             onClick={async (e) => {
