@@ -1,7 +1,7 @@
 // import App from 'next/app'
 import { useState, useEffect, ReactElement, ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { ApolloProvider } from '@apollo/client';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
@@ -51,21 +51,23 @@ function MyApp({
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
         <ModalStateProvider>
-          <motion.div
-            key={router.route}
-            initial="pageInitial"
-            animate="pageAnimate"
-            variants={{
-              pageInitial: {
-                opacity: 0,
-              },
-              pageAnimate: {
-                opacity: 1,
-              },
-            }}
-          >
-            {getLayout(<Component {...pageProps} />)}
-          </motion.div>
+          <LazyMotion features={domAnimation}>
+            <m.div
+              key={router.route}
+              initial="pageInitial"
+              animate="pageAnimate"
+              variants={{
+                pageInitial: {
+                  opacity: 0,
+                },
+                pageAnimate: {
+                  opacity: 1,
+                },
+              }}
+            >
+              {getLayout(<Component {...pageProps} />)}
+            </m.div>
+          </LazyMotion>
         </ModalStateProvider>
       </ApolloProvider>
     </SessionProvider>
