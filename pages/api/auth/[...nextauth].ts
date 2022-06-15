@@ -232,6 +232,7 @@ export default NextAuth({
       delete user.password;
       delete user.createdAt;
       delete user.updatedAt;
+      delete user.token;
       return { ...session, user };
     },
     async jwt({ token, user, account, profile, isNewUser }) {
