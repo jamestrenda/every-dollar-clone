@@ -184,16 +184,6 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
             <FaFacebookF size="20" fill="currentColor" />
             <span className="sr-only">Sign In With Facebook</span>
           </StyledProviderButton>
-          {/* <StyledProviderButton
-            type="button"
-            onClick={async (e) => {
-              const res = await signIn('github');
-            }}
-            title="Sign in with Github"
-          >
-            <FaGithub size="20" fill="currentColor" />
-            <span className="sr-only">Sign In With Github</span>
-          </StyledProviderButton> */}
           <StyledProviderButton
             type="button"
             title="Sign in with Google"
@@ -203,6 +193,16 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
           >
             <FaGoogle size="20" fill="currentColor" />
             <span className="sr-only">Sign In With Google</span>
+          </StyledProviderButton>
+          <StyledProviderButton
+            type="button"
+            onClick={async (e) => {
+              const res = await signIn('github');
+            }}
+            title="Sign in with Github"
+          >
+            <FaGithub size="20" fill="currentColor" />
+            <span className="sr-only">Sign In With Github</span>
           </StyledProviderButton>
         </div>
       </div>
