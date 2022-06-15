@@ -109,6 +109,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
                 placeholder="Email"
                 value={inputs['emailCredentials']}
                 onChange={handleChange}
+                required
               />
             </StyledField>
             <StyledField>
