@@ -65,7 +65,6 @@ export const CURRENT_USER_QUERY = extendType({
     t.field('user', {
       type: User,
       async resolve(_parent, args, ctx) {
-        console.log({ ctx });
         const user = await ctx.prisma.user.findUnique({
           where: {
             id: ctx.user.id,
