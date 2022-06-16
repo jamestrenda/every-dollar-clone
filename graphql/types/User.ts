@@ -2,13 +2,11 @@ import {
   nonNull,
   objectType,
   stringArg,
-  extendType,
   enumType,
   intArg,
   queryField,
   mutationField,
 } from 'nexus';
-import { connectionFromArraySlice, cursorToOffset } from 'graphql-relay';
 // import { Transaction } from './Transaction';
 // import { Budget } from './Budget';
 // import { Session } from './Session';
@@ -18,7 +16,6 @@ import { randomBytes } from 'crypto';
 import { promisify } from 'util';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
-import { signIn } from 'next-auth/react';
 import { PasswordResetRequestEmailHtml } from '../../components/email/resetRequest';
 
 export const User = objectType({
