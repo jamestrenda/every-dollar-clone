@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 const LocalStateContext = createContext(null);
 
-const ModalStateProvider = ({ children }) => {
+const ModalStateProvider = ({ children }: { children: ReactNode }) => {
   const [modal, setModal] = useState({
     visible: false,
     title: '',
