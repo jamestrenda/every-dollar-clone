@@ -31,10 +31,13 @@ export default function useForm(initial = {}) {
       [name]: value,
     });
   }
-
+  function resetForm() {
+    setInputs(initial);
+  }
   return {
     inputs,
     handleChange,
     handleNumberChange,
+    resetForm,
   };
 }
