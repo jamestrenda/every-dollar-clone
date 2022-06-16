@@ -36,21 +36,21 @@ model Account {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  firstName     String?   @map("first_name")
-  lastName      String?   @map("last_name")
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  password      String?
-  image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  role          Role      @default(USER)
-  isAdmin       Boolean   @default(false) @map("is_admin")
-  onboarded     Boolean   @default(false)
-  // sessions      Session[]
-  // accessToken   String        @unique
+  id               Int       @id @default(autoincrement())
+  firstName        String?   @map("first_name")
+  lastName         String?   @map("last_name")
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime? @map("email_verified")
+  password         String?
+  image            String?
+  createdAt        DateTime  @default(now()) @map(name: "created_at")
+  updatedAt        DateTime  @updatedAt @map(name: "updated_at")
+  role             Role      @default(USER)
+  isAdmin          Boolean   @default(false) @map("is_admin")
+  onboarded        Boolean   @default(false)
+  resetToken       String?   @db.Text
+  resetTokenExpiry Int?
 
   accounts Account[]
   @@index([firstName, lastName], name: "full_name")

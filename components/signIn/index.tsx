@@ -20,14 +20,14 @@ export const StyledProviderButton = styled.button`
 `;
 
 export default function SignIn({ csrfToken }: { csrfToken: string }) {
-  const { inputs, handleChange } = useForm({
+  const { inputs, handleChange, resetForm } = useForm({
     email: '',
     emailCredentials: '',
     password: '',
   });
 
   const { query } = useRouter();
-  const { resetModal } = useModal();
+  const { closeModal } = useModal();
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,6 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
   const handleCredentials = async (e) => {
     e.preventDefault();
 
-    // setLoading(true);
     if (!inputs['password'] || inputs['password'] == '') {
       setErrors('Oops! You forgot to enter your password.');
       return false;
@@ -77,7 +76,8 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
       );
     } else {
       setErrors(null);
-      resetModal();
+      resetForm();
+      closeModal();
       if (res.ok) router.push('/account');
     }
   };
@@ -137,6 +137,11 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
           >
             {loading ? <Spinner /> : 'Sign In'}
           </Button>
+          <div className="block text-center">
+            <Link href="/account/forgot">
+              <a className="text-indigo-500">Forgot Password?</a>
+            </Link>
+          </div>
         </StyledForm>
         <div className="">
           <TextDivider text="Or continue password-free" />

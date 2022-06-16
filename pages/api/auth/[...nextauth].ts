@@ -93,6 +93,7 @@ export default NextAuth({
 
         // console.log({ credentials });
         // 1. check if username/email exists
+
         const user = await prisma.user.findUnique({
           where: {
             email,
@@ -105,6 +106,11 @@ export default NextAuth({
           if (!compare) {
             return null;
           }
+
+          // don't expose the user's password or other sensitive data!!!
+          delete user.password;
+          delete user.createdAt;
+          delete user.updatedAt;
 
           return user;
         }
@@ -126,7 +132,6 @@ export default NextAuth({
         password: { type: 'password' },
       },
       async authorize(credentials, req) {
-        console.log({ credentials });
         // You need to provide your own logic here that takes the credentials
         // submitted and returns either an object representing a user
         // or a value that is false/null if the credentials are invalid.
@@ -175,18 +180,18 @@ export default NextAuth({
           },
         });
 
-        if (user) {
-          const token = await jwt.sign(
-            { jwt: user.id },
-            process.env.NEXTAUTH_SECRET
-          );
+        // if (user) {
+        //   const token = await jwt.sign(
+        //     { jwt: user.id },
+        //     process.env.NEXTAUTH_SECRET
+        //   );
 
-          user['token'] = token;
+        //   user['token'] = token;
 
-          return user;
-        }
+        //   return user;
+        // }
         // Return null if user data could not be retrieved
-        return null;
+        return user || null;
       },
     }),
   ],
@@ -218,10 +223,10 @@ export default NextAuth({
     async session({ session, token }) {
       const { user } = token;
 
-      delete user.password;
-      delete user.createdAt;
-      delete user.updatedAt;
-      delete user.token;
+      // delete user.password;
+      // delete user.createdAt;
+      // delete user.updatedAt;
+      // delete user.token;
       return { ...session, user };
     },
     async jwt({ token, user, account, profile, isNewUser }) {

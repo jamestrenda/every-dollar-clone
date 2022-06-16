@@ -24,11 +24,18 @@ type Account {
 """Date custom scalar type"""
 scalar DateTime
 
+type Message {
+  error: Boolean
+  message: String
+}
+
+type Mutation {
+  requestReset(email: String!): Message
+  resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
+}
+
 type Query {
-  account(id: Int!): Account
-  accounts: [Account!]
-  user: User
-  users: [User!]
+  user(id: Int!): User!
 }
 
 type User {
@@ -42,7 +49,8 @@ type User {
   isAdmin: Boolean!
   lastName: String!
   onboarded: Boolean!
-  password: String!
+  resetToken: String
+  resetTokenExpiry: Int
   role: String!
   updatedAt: DateTime!
 }

@@ -11,6 +11,7 @@ import { StyledProviderButton } from '../signIn';
 import { FaApple, FaFacebookF, FaGithub, FaGoogle } from 'react-icons/fa';
 import { TextDivider } from '../divider/text';
 import { Spinner } from '../spinner';
+import { useModal } from '../modalStateProvider';
 
 export const StyledField = styled.div(
   ({ className }: { className: string }) => [tw`block`, className && className]
@@ -31,15 +32,16 @@ export const StyledForm = styled.form`
 `;
 
 export default function SignUp({ csrfToken }: { csrfToken: string }) {
-  const { inputs, handleChange } = useForm({
+  const { inputs, handleChange, resetForm } = useForm({
     firstName: '',
     lastName: '',
-    email: '',
-    emailCredentials: '',
-    password: '',
+    emailSignUp: '',
+    emailSignUpCredentials: '',
+    passwordSignUp: '',
     confirm: '',
   });
 
+  const { closeModal } = useModal();
   const { query } = useRouter();
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
@@ -57,16 +59,21 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
   }, [query]);
 
   const isDisabled = () =>
-    inputs['password'] === '' ||
+    inputs['passwordSignUp'] === '' ||
     inputs['confirm'] === '' ||
-    inputs['password'] !== inputs['confirm'];
+    inputs['passwordSignUp'] !== inputs['confirm'];
 
   const handleEmail = async (e) => {
     e.preventDefault();
     setLoadingEmail(true);
     const res = await signIn('email', {
-      email: inputs['email'],
+      email: inputs['emailSignUp'],
     });
+
+    if (res.ok) {
+      resetForm();
+      closeModal();
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,7 +82,7 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     // let's do some client-side validation here for the credentials provider.
     // we're also checking this field on the backend inside our provider callback,
     // but let's try to enforce this as soon as possible.
-    if (!inputs['password'] || inputs['passowrd'] == '') {
+    if (!inputs['passwordSignUp'] || inputs['passwordSignUp'] == '') {
       setErrors('Oops! You forgot to set a password.');
       return false;
     }
@@ -89,8 +96,8 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     const res = await signIn('sign-up-credentials', {
       firstName: inputs['firstName'],
       lastName: inputs['lastName'],
-      email: inputs['emailCredentials'],
-      password: inputs['password'],
+      email: inputs['emailSignUpCredentials'],
+      password: inputs['passwordSignUp'],
       redirect: false,
     });
     if (res?.error) {
@@ -104,6 +111,8 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
         </>
       );
     } else {
+      resetForm();
+      closeModal();
       router.push('/account');
     }
   };
@@ -165,25 +174,25 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
                 Email address
               </label>
               <StyledInput
-                id="emailCredentials"
-                name="emailCredentials"
+                id="emailSignUpCredentials"
+                name="emailSignUpCredentials"
                 type="email"
                 placeholder="Email"
-                value={inputs['emailCredentials']}
+                value={inputs['emailSignUpCredentials']}
                 onChange={handleChange}
                 required
               />
             </StyledField>
             <StyledField>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="passwordSignUp" className="sr-only">
                 Password
               </label>
               <StyledInput
-                id="password"
-                name="password"
+                id="passwordSignUp"
+                name="passwordSignUp"
                 type="password"
                 placeholder="Password"
-                value={inputs['password']}
+                value={inputs['passwordSignUp']}
                 onChange={handleChange}
                 autoComplete="new-password"
                 required
@@ -214,15 +223,15 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
           <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
             <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
             <StyledField className="!mt-0">
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="emailSignUp" className="sr-only">
                 E-mail Address
               </label>
               <StyledInput
-                id="email"
-                name="email"
+                id="emailSignUp"
+                name="emailSignUp"
                 type="email"
                 placeholder="Email Address"
-                value={inputs['email']}
+                value={inputs['emailSignUp']}
                 onChange={handleChange}
                 required
               />
