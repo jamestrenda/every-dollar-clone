@@ -17,7 +17,9 @@ import { Message } from './Message';
 import { randomBytes } from 'crypto';
 import { promisify } from 'util';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 import { signIn } from 'next-auth/react';
+import { PasswordResetRequestEmailHtml } from '../../components/email/resetRequest';
 
 export const User = objectType({
   name: 'User',
@@ -99,14 +101,27 @@ export const REQUEST_RESET_MUTATION = mutationField('requestReset', {
     });
 
     // 3. Send them their token via email
-    // const mailRes = await mail.transport.sendMail({
-    //   from: 'wesbos@gmail.com',
-    //   to: user.email,
-    //   subject: 'Your password reset token',
-    //   html: mail.makeANiceEmail(
-    //     `Your password reset link is here! \n\n<a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">Click Here to reset</a>`
-    //   ),
-    // });
+    const host = process.env.NEXTAUTH_URL;
+    const url = `${host}/account/password-reset?resetToken=${resetToken}`;
+    const transport = nodemailer.createTransport({
+      service: 'Postmark', // no need to set host or port etc.
+      auth: {
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
+      },
+    });
+    await transport.sendMail({
+      to: args.email,
+      from: process.env.EMAIL_FROM,
+      subject: `Password Reset Link for EveryDollar Clone`,
+      text: text({ url, host, appName: 'EveryDollar Clone' }),
+      html: html({
+        url,
+        host,
+        appName: 'EveryDollar Clone',
+        email: args.email,
+      }),
+    });
     return {
       message: 'Success! Check your e-mail for a link to reset your password.',
     };
@@ -130,7 +145,6 @@ export const PASSWORD_RESET_MUTATION = mutationField('resetPassword', {
       };
     }
     if (args.password !== args.confirmPassword) {
-      // throw new Error('Passwords do not match');
       return {
         error: true,
         message: 'Password fields must match. Please try again.',
@@ -139,18 +153,16 @@ export const PASSWORD_RESET_MUTATION = mutationField('resetPassword', {
 
     // 2. Check that this is a legit resetToken
     // 3. Check that it's not expired
-    // Note: If we didn't need the user here, we could also use db.exists()
     const [user] = await ctx.prisma.user.findMany({
       where: {
         resetToken: args.resetToken,
-        // resetTokenExpiry: {
-        //   gte: Date.now() - 3600000, // within the last hour
-        // },
+        resetTokenExpiry: {
+          gte: Date.now() - 3600000, // within the last hour
+        },
       },
     });
 
     if (!user) {
-      // throw new Error('This token is either invalid or expired.');
       return {
         error: true,
         message: 'This token is either invalid or expired.',
@@ -188,3 +200,42 @@ export const PASSWORD_RESET_MUTATION = mutationField('resetPassword', {
     };
   },
 });
+
+// Email HTML body
+function html({
+  url,
+  host,
+  appName,
+  email,
+}: Record<'url' | 'host' | 'appName' | 'email', string>) {
+  // Insert invisible space into domains and email address to prevent both the
+  // email address and the domain from being turned into a hyperlink by email
+  // clients like Outlook and Apple mail, as this is confusing because it seems
+  // like they are supposed to click on their email address to sign in.
+  const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
+  const escapedHost = `${host.replace(/\./g, '&#8203;.')}`;
+
+  // Some simple styling options
+  const options = {
+    appName,
+    url,
+    backgroundColor: '#000',
+    textColor: '#444444',
+    mainBackgroundColor: '#fafafa',
+    buttonBackgroundColor: '#346df1',
+    buttonBorderColor: '#346df1',
+    buttonTextColor: '#ffffff',
+    fontFamily: 'Helvetica, Arial, sans-serif',
+  };
+
+  return `${PasswordResetRequestEmailHtml(options)}`;
+}
+
+// Email Text body (fallback for email clients that don't render HTML, e.g. feature phones)
+function text({
+  url,
+  host,
+  appName,
+}: Record<'url' | 'host' | 'appName', string>) {
+  return `Password-free sign-in link for ${appName}\n\nSimply paste the URL below into a web browser to reset your password. Your password reset token will expire in one hour and can only be used once.\n\n${url}\n\n`;
+}
