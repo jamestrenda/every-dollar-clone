@@ -28,6 +28,7 @@ export const ForgotPassword = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     const res = await requestReset({ variables: { email: inputs['email'] } });
+    console.log({ res, data, error });
     resetForm();
   };
 
