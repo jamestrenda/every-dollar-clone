@@ -2,17 +2,8 @@ import { makeSchema, connectionPlugin, scalarType } from 'nexus';
 import { join } from 'path';
 import * as types from './types';
 
-const DateScalar = scalarType({
-  name: 'DateTime',
-  asNexusMethod: 'dateTime',
-  description: 'Date custom scalar type',
-  parseValue(value) {
-    return new Date(value);
-  },
-});
-
 export const schema = makeSchema({
-  types: { types, DateScalar },
+  types,
   plugins: [connectionPlugin()],
   outputs: {
     typegen: join(
