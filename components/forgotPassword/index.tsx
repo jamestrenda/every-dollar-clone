@@ -27,6 +27,7 @@ export const ForgotPassword = () => {
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
+    console.log({ 'handleForgotPassword called' });
     const res = await requestReset({ variables: { email: inputs['email'] } });
     console.log({ res, data, error });
     resetForm();
