@@ -35,6 +35,8 @@ type Mutation {
 }
 
 type Query {
+  account(id: Int!): Account
+  accounts: [Account!]
   user(id: Int!): User!
 }
 
