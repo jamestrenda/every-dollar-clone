@@ -21,7 +21,7 @@ export const Notice = ({
           : type === 'info'
           ? 'bg-indigo-100'
           : ''
-      } px-5 py-4 my-5 flex`}
+      } px-5 py-4 my-5 flex text-left`}
     >
       <div
         className={`mt-1 mr-3 ${
