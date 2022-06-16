@@ -50,7 +50,7 @@ export default NextAuth({
         provider: { server, from },
       }) {
         const { host } = new URL(url);
-        const appName = 'Every Dollar CLone';
+        const appName = 'EveryDollar CLone';
         const transport = nodemailer.createTransport(server);
         await transport.sendMail({
           to: email,
