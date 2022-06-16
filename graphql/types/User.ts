@@ -81,7 +81,6 @@ export const REQUEST_RESET_MUTATION = mutationField('requestReset', {
       where: { email: args.email },
     });
 
-    console.log({ args, user });
     if (!user) {
       // throw new Error(`No user with the email ${args.email}`);
       return {
