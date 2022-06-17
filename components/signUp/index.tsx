@@ -113,7 +113,7 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     } else {
       resetForm();
       closeModal();
-      router.push('/account');
+      router.push('/budget');
     }
   };
   return (

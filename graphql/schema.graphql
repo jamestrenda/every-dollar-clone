@@ -21,6 +21,14 @@ type Account {
   userId: Int!
 }
 
+type Budget {
+  createdAt: DateTime!
+  id: Int!
+  updatedAt: DateTime!
+  user: User!
+  userId: Int!
+}
+
 """Date custom scalar type"""
 scalar DateTime
 
@@ -30,6 +38,7 @@ type Message {
 }
 
 type Mutation {
+  createBudget(userId: Int!): Budget
   requestReset(email: String!): Message
   resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
 }
@@ -37,11 +46,15 @@ type Mutation {
 type Query {
   account(id: Int!): Account
   accounts: [Account!]
+  budget(date: String, id: Int): Budget
+  budgetByMonth(date: String, id: Int): Budget
+  budgets: [Budget!]
   user(id: Int!): User!
 }
 
 type User {
   accounts: [Account]
+  budgets: [Budget]
   createdAt: DateTime!
   email: String!
   emailVerified: DateTime
@@ -51,8 +64,6 @@ type User {
   isAdmin: Boolean!
   lastName: String!
   onboarded: Boolean!
-  resetToken: String
-  resetTokenExpiry: Int
   role: String!
   updatedAt: DateTime!
 }

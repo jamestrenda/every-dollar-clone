@@ -17,6 +17,7 @@ import { promisify } from 'util';
 import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { PasswordResetRequestEmailHtml } from '../../components/email/resetRequest';
+import { Budget } from './Budget';
 
 export const User = objectType({
   name: 'User',
@@ -42,6 +43,30 @@ export const User = objectType({
             },
           })
           .accounts();
+      },
+    });
+    // t.list.field('transactions', {
+    //   type: Transaction,
+    //   async resolve(parent, _args, ctx) {
+    //     return await ctx.prisma.user
+    //       .findUnique({
+    //         where: {
+    //           id: parent.id,
+    //         },
+    //       })
+    //       .transactions();
+    //   },
+    // });
+    t.list.field('budgets', {
+      type: Budget,
+      async resolve(parent, _args, ctx) {
+        return await ctx.prisma.user
+          .findUnique({
+            where: {
+              id: parent.id,
+            },
+          })
+          .budgets();
       },
     });
   },

@@ -10,6 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Budget {
+  id        Int      @id @default(autoincrement())
+  // incomes      Income[]
+  // categories   Category[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  // transactions Transaction[]
+  // debts        Debt[]
+  // favorites    Favorite[]
+
+  @@unique([id, userId])
+}
+
 model Account {
   id                 String    @id @default(cuid())
   userId             Int
@@ -51,8 +66,9 @@ model User {
   onboarded        Boolean   @default(false)
   resetToken       String?   @db.Text
   resetTokenExpiry Int?
+  budgets          Budget[]
+  accounts         Account[]
 
-  accounts Account[]
   @@index([firstName, lastName], name: "full_name")
   @@map(name: "users")
 }

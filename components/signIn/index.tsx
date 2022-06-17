@@ -75,7 +75,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
       setErrors(null);
       resetForm();
       closeModal();
-      if (res.ok) push('/account');
+      if (res.ok) push('/budget');
     }
   };
   return (
