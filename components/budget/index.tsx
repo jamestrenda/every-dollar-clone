@@ -7,7 +7,11 @@ import { Button } from '../button';
 import { Notice } from '../notice';
 import { PageSpinner } from '../pageSpinner';
 import { CREATE_BUDGET_MUTATION } from './mutations';
-import { SINGLE_BUDGET_BY_MONTH_QUERY, SINGLE_BUDGET_QUERY } from './queries';
+import {
+  DELETE_BUDGET_MUTATION,
+  SINGLE_BUDGET_BY_MONTH_QUERY,
+  SINGLE_BUDGET_QUERY,
+} from './queries';
 
 export const Budget = () => {
   const { data: session, status } = useSession();
@@ -17,37 +21,40 @@ export const Budget = () => {
   const [activeBudget, setActiveBudget] = useState(
     format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
   );
-  console.log({ activeBudget });
+  const [activeBudgetId, setActiveBudgetId] = useState(null);
 
   const [budget, { data: lazyData, loading: lazyLoading, error: lazyError }] =
     useLazyQuery(SINGLE_BUDGET_QUERY, {
-      // onCompleted: async (data) => {
-      //   if (data?.budget) {
-      //     const sortCategoriesByIndex = await sortBy(data.budget.categories, [
-      //       (category) => category.index,
-      //     ]);
-      //     const sortIncomesByIndex = sortBy(data.budget.incomes, [
-      //       (income) => income.index,
-      //     ]);
-      //     setCategories(sortCategoriesByIndex);
-      //     setIncomes(sortIncomesByIndex);
-      //   }
-      // },
+      onCompleted: async (data) => {
+        if (data?.budget) {
+          setActiveBudgetId(data.budget.id);
+          // const sortCategoriesByIndex = await sortBy(data.budget.categories, [
+          //   (category) => category.index,
+          // ]);
+          // const sortIncomesByIndex = sortBy(data.budget.incomes, [
+          //   (income) => income.index,
+          // ]);
+          // setCategories(sortCategoriesByIndex);
+          // setIncomes(sortIncomesByIndex);
+        }
+      },
     });
+
   const { data, loading, error } = useQuery(SINGLE_BUDGET_BY_MONTH_QUERY, {
     variables: { date: activeBudget },
-    // onCompleted: async (data) => {
-    //   if (data?.budget) {
-    //     const sortCategoriesByIndex = await sortBy(data.budget.categories, [
-    //       (category) => category.index,
-    //     ]);
-    //     const sortIncomesByIndex = sortBy(data.budget.incomes, [
-    //       (income) => income.index,
-    //     ]);
-    //     setCategories(sortCategoriesByIndex);
-    //     setIncomes(sortIncomesByIndex);
-    //   }
-    // },
+    onCompleted: async (data) => {
+      if (data?.budgetByMonth) {
+        setActiveBudgetId(data.budgetByMonth.id);
+        // const sortCategoriesByIndex = await sortBy(data.budget.categories, [
+        //   (category) => category.index,
+        // ]);
+        // const sortIncomesByIndex = sortBy(data.budget.incomes, [
+        //   (income) => income.index,
+        // ]);
+        // setCategories(sortCategoriesByIndex);
+        // setIncomes(sortIncomesByIndex);
+      }
+    },
   });
 
   const [
@@ -56,7 +63,15 @@ export const Budget = () => {
   ] = useMutation(CREATE_BUDGET_MUTATION, {
     variables: { userId: session?.user?.id },
   });
+  const [
+    deleteBudget,
+    { loading: deleteBudgetLoading, error: deleteBudgetError },
+  ] = useMutation(DELETE_BUDGET_MUTATION);
+  console.log({ activeBudgetId });
 
+  const handleDeleteBudget = async (id) => {
+    await deleteBudget({ variables: { id } });
+  };
   const handleCreateBudget = async (e) => {
     e.preventDefault();
 
@@ -84,6 +99,9 @@ export const Budget = () => {
         <div>
           {budget.id} {currentBudgetMonth}
         </div>
+        <Button onClick={() => handleDeleteBudget(activeBudgetId)}>
+          Delete Budget
+        </Button>
       </>
     );
   }

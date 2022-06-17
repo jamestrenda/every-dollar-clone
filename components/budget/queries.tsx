@@ -431,3 +431,11 @@ export const SINGLE_BUDGET_QUERY = gql`
     }
   }
 `;
+
+export const DELETE_BUDGET_MUTATION = gql`
+  mutation DELETE_BUDGET_MUTATION($id: Int!) {
+    deleteBudget(id: $id) {
+      id
+    }
+  }
+`;

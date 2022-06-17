@@ -113,7 +113,7 @@ export const CREATE_BUDGET_MUTATION = mutationField('createBudget', {
     //     },
     //   })
     //   .categories();
-    return ctx.prisma.budget.create({
+    return await ctx.prisma.budget.create({
       data: {
         userId: args.userId,
         // incomes: {
@@ -459,6 +459,20 @@ export const SINGLE_BUDGET_BY_ID_QUERY = queryField('budget', {
   args: { id: intArg(), date: stringArg() },
   async resolve(_parent, args, ctx) {
     return await ctx.prisma.budget.findFirst({
+      where: {
+        id: args.id,
+      },
+    });
+  },
+});
+
+export const DELETE_BUDGET_MUTATION = mutationField('deleteBudget', {
+  type: Budget,
+  args: {
+    id: nonNull(intArg()),
+  },
+  async resolve(_parent, args, ctx) {
+    return await ctx.prisma.budget.delete({
       where: {
         id: args.id,
       },

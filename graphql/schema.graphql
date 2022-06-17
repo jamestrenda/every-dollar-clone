@@ -39,6 +39,7 @@ type Message {
 
 type Mutation {
   createBudget(userId: Int!): Budget
+  deleteBudget(id: Int!): Budget
   requestReset(email: String!): Message
   resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
 }
