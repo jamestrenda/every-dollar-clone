@@ -20,7 +20,7 @@ const GlobalStyles = createGlobalStyle`
 const Layout = ({ children }) => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
-  console.log({ loading });
+
   const {
     modal: { visible: isModalVisible },
   } = useModal();
@@ -39,7 +39,6 @@ const Layout = ({ children }) => {
           <main className="relative flex-grow bg-gray-50 px-12 overflow-y-scroll overflow-x-hidden">
             {children}
           </main>
-          {/* {modal.visible && <Modal />} */}
         </div>
       ) : (
         <>
