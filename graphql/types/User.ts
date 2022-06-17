@@ -30,8 +30,6 @@ export const User = objectType({
     t.nonNull.boolean('onboarded');
     t.nonNull.dateTime('createdAt');
     t.nonNull.dateTime('updatedAt');
-    t.string('resetToken');
-    t.int('resetTokenExpiry');
     t.string('image');
     t.nonNull.string('role');
     t.list.field('accounts', {
