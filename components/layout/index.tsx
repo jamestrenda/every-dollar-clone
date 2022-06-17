@@ -1,10 +1,12 @@
 import { useSession } from 'next-auth/react';
 import styled, { createGlobalStyle } from 'styled-components';
 import tw from 'twin.macro';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 import { Footer } from '../footer';
 import Header from '../header';
 import { Modal } from '../modal';
 import { useModal } from '../modalStateProvider';
+import { PageSpinner } from '../pageSpinner';
 const GlobalStyles = createGlobalStyle`
   html {
     // custom-properties
@@ -17,6 +19,8 @@ const GlobalStyles = createGlobalStyle`
 
 const Layout = ({ children }) => {
   const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  console.log({ loading });
   const {
     modal: { visible: isModalVisible },
   } = useModal();
@@ -24,7 +28,9 @@ const Layout = ({ children }) => {
   return (
     <>
       <GlobalStyles />
-      {session ? (
+      {loading ? (
+        <PageSpinner />
+      ) : session ? (
         <div
           className="flex max-h-screen overflow-hidden"
           // onClick={handleClick}
@@ -42,7 +48,24 @@ const Layout = ({ children }) => {
         </>
       )}
 
-      {isModalVisible && <Modal />}
+      {isModalVisible && (
+        <LazyMotion features={domAnimation}>
+          <m.div
+            initial="modalInitial"
+            animate="modalAnimate"
+            variants={{
+              modalInitial: {
+                opacity: 0,
+              },
+              modalAnimate: {
+                opacity: 1,
+              },
+            }}
+          >
+            <Modal />
+          </m.div>
+        </LazyMotion>
+      )}
     </>
   );
 };

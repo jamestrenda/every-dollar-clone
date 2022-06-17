@@ -14,7 +14,7 @@ export const SignInSignUp = ({
 
   return (
     <>
-      <div className="flex justify-center mx-8 mt-2 border-b border-solid border-gray-200 relative">
+      <div className="flex justify-center mx-0 sm:mx-8 mt-5 sm:mt-2 border-b border-solid border-gray-200 relative">
         <button
           type="button"
           className={`w-full p-4 hover:text-indigo-500 ${
@@ -52,11 +52,13 @@ export const SignInSignUp = ({
           },
         }}
       >
-        {active === 'SignIn' ? (
-          <SignIn csrfToken={csrfToken} />
-        ) : (
-          <SignUp csrfToken={csrfToken} />
-        )}
+        <div className="px-0 p-8 sm:px-8">
+          {active === 'SignIn' ? (
+            <SignIn csrfToken={csrfToken} />
+          ) : (
+            <SignUp csrfToken={csrfToken} />
+          )}
+        </div>
       </motion.div>
     </>
   );

@@ -117,33 +117,32 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
     }
   };
   return (
-    <div className="p-8">
-      <div className="max-w-md mx-auto w-full">
-        {errors && (
-          <>
-            <Notice type="error" message={errors} />
-            <Notice
-              type="info"
-              message={
-                <>
-                  If you'd prefer to sign up without a password, visit the{' '}
-                  <Link href="/account/sign-in">
-                    <a className="text-black underline">Sign In</a>
-                  </Link>{' '}
-                  page and choose one of our password-less sign-in options.
-                </>
-              }
-            />
-          </>
-        )}
+    <div className="max-w-md mx-auto w-full">
+      {errors && (
+        <>
+          <Notice type="error" message={errors} />
+          <Notice
+            type="info"
+            message={
+              <>
+                If you'd prefer to sign up without a password, visit the{' '}
+                <Link href="/account/sign-in">
+                  <a className="text-black underline">Sign In</a>
+                </Link>{' '}
+                page and choose one of our password-less sign-in options.
+              </>
+            }
+          />
+        </>
+      )}
 
-        <StyledForm
-          method="post"
-          onSubmit={handleSubmit}
-          className={`${errors ? 'mt-8' : ''}`}
-        >
-          <div className="rounded-md shadow-sm -space-y-px">
-            {/* <StyledField>
+      <StyledForm
+        method="post"
+        onSubmit={handleSubmit}
+        className={`${errors ? 'mt-8' : ''}`}
+      >
+        <div className="rounded-md shadow-sm -space-y-px">
+          {/* <StyledField>
               <label htmlFor="firstName" className="sr-only">
                 First Name
               </label>
@@ -169,122 +168,114 @@ export default function SignUp({ csrfToken }: { csrfToken: string }) {
                 onChange={handleChange}
               />
             </StyledField> */}
-            <StyledField>
-              <label htmlFor="emailCredentials" className="sr-only">
-                Email address
-              </label>
-              <StyledInput
-                id="emailSignUpCredentials"
-                name="emailSignUpCredentials"
-                type="email"
-                placeholder="Email"
-                value={inputs['emailSignUpCredentials']}
-                onChange={handleChange}
-                required
-              />
-            </StyledField>
-            <StyledField>
-              <label htmlFor="passwordSignUp" className="sr-only">
-                Password
-              </label>
-              <StyledInput
-                id="passwordSignUp"
-                name="passwordSignUp"
-                type="password"
-                placeholder="Password"
-                value={inputs['passwordSignUp']}
-                onChange={handleChange}
-                autoComplete="new-password"
-                required
-              />
-            </StyledField>
-            <StyledField>
-              <label htmlFor="confirm" className="sr-only">
-                Re-Type Password
-              </label>
-              <StyledInput
-                id="confirm"
-                name="confirm"
-                type="password"
-                placeholder="Re-Type Password"
-                value={inputs['confirm']}
-                onChange={handleChange}
-                autoComplete="new-password"
-              />
-            </StyledField>
-          </div>
-          <Button type="submit" disabled={isDisabled()}>
-            {loading ? <Spinner /> : 'Create Account'}
+          <StyledField>
+            <label htmlFor="emailCredentials" className="sr-only">
+              Email address
+            </label>
+            <StyledInput
+              id="emailSignUpCredentials"
+              name="emailSignUpCredentials"
+              type="email"
+              placeholder="Email"
+              value={inputs['emailSignUpCredentials']}
+              onChange={handleChange}
+              required
+            />
+          </StyledField>
+          <StyledField>
+            <label htmlFor="passwordSignUp" className="sr-only">
+              Password
+            </label>
+            <StyledInput
+              id="passwordSignUp"
+              name="passwordSignUp"
+              type="password"
+              placeholder="Password"
+              value={inputs['passwordSignUp']}
+              onChange={handleChange}
+              autoComplete="new-password"
+              required
+            />
+          </StyledField>
+          <StyledField>
+            <label htmlFor="confirm" className="sr-only">
+              Re-Type Password
+            </label>
+            <StyledInput
+              id="confirm"
+              name="confirm"
+              type="password"
+              placeholder="Re-Type Password"
+              value={inputs['confirm']}
+              onChange={handleChange}
+              autoComplete="new-password"
+            />
+          </StyledField>
+        </div>
+        <Button type="submit" disabled={isDisabled()}>
+          {loading ? <Spinner /> : 'Create Account'}
+        </Button>
+      </StyledForm>
+      <div className="">
+        <TextDivider text="Or continue password-free" />
+        {emailError && <Notice type="error" message={emailError} />}
+        <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
+          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+          <StyledField className="!mt-0">
+            <label htmlFor="emailSignUp" className="sr-only">
+              E-mail Address
+            </label>
+            <StyledInput
+              id="emailSignUp"
+              name="emailSignUp"
+              type="email"
+              placeholder="Email Address"
+              value={inputs['emailSignUp']}
+              onChange={handleChange}
+              required
+            />
+          </StyledField>
+          <Button
+            type="submit"
+            disabled={inputs['emailSignUp'] === '' ?? false}
+          >
+            {loadingEmail ? <Spinner /> : 'Sign In With E-Mail'}
           </Button>
         </StyledForm>
-        <div className="">
-          <TextDivider text="Or continue password-free" />
-          {emailError && <Notice type="error" message={emailError} />}
-          <StyledForm method="post" onSubmit={handleEmail} className="mt-0">
-            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-            <StyledField className="!mt-0">
-              <label htmlFor="emailSignUp" className="sr-only">
-                E-mail Address
-              </label>
-              <StyledInput
-                id="emailSignUp"
-                name="emailSignUp"
-                type="email"
-                placeholder="Email Address"
-                value={inputs['emailSignUp']}
-                onChange={handleChange}
-                required
-              />
-            </StyledField>
-            <Button type="submit" disabled={inputs['email'] === '' ?? false}>
-              {loadingEmail ? <Spinner /> : 'Sign In With E-Mail'}
-            </Button>
-          </StyledForm>
-        </div>
-        <TextDivider text="Or continue with" />
-        <div className="text-gray-500 flex items-center justify-center gap-2">
-          {/* <StyledProviderButton
-            type="button"
-            onClick={async (e) => {
-              const res = await signIn('apple');
-            }}
-            title="Sign in with Apple"
-          >
-            <span className="sr-only">Sign In With Apple</span>
-            <FaApple size="20" fill="currentColor" />
-          </StyledProviderButton> */}
-          <StyledProviderButton
-            type="button"
-            onClick={async (e) => {
-              const res = await signIn('facebook');
-            }}
-            title="Sign in with Facebook"
-          >
-            <FaFacebookF size="20" fill="currentColor" />
-            <span className="sr-only">Sign In With Facebook</span>
-          </StyledProviderButton>
-          <StyledProviderButton
-            type="button"
-            title="Sign in with Google"
-            onClick={async (e) => {
-              const res = await signIn('google');
-            }}
-          >
-            <FaGoogle size="20" fill="currentColor" />
-            <span className="sr-only">Sign In With Google</span>
-          </StyledProviderButton>
-          <StyledProviderButton
-            type="button"
-            onClick={async (e) => {
-              const res = await signIn('github');
-            }}
-            title="Sign in with Github"
-          >
-            <FaGithub size="20" fill="currentColor" />
-            <span className="sr-only">Sign In With Github</span>
-          </StyledProviderButton>
-        </div>
       </div>
+      {/* <TextDivider text="Or continue with" />
+      <div className="text-gray-500 flex items-center justify-center gap-2">
+        <StyledProviderButton
+          type="button"
+          onClick={async (e) => {
+            const res = await signIn('facebook');
+          }}
+          title="Sign in with Facebook"
+        >
+          <FaFacebookF size="20" fill="currentColor" />
+          <span className="sr-only">Sign In With Facebook</span>
+        </StyledProviderButton>
+        <StyledProviderButton
+          type="button"
+          title="Sign in with Google"
+          onClick={async (e) => {
+            const res = await signIn('google');
+          }}
+        >
+          <FaGoogle size="20" fill="currentColor" />
+          <span className="sr-only">Sign In With Google</span>
+        </StyledProviderButton>
+        <StyledProviderButton
+          type="button"
+          onClick={async (e) => {
+            const res = await signIn('github');
+          }}
+          title="Sign in with Github"
+        >
+          <FaGithub size="20" fill="currentColor" />
+          <span className="sr-only">Sign In With Github</span>
+        </StyledProviderButton>
+      </div> */}
     </div>
   );
 }

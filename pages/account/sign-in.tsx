@@ -6,7 +6,7 @@ import SignIn from '../../components/signIn';
 
 export default function SignInPage({ providers, session, csrfToken }) {
   return (
-    <div className="grid justify-center pt-8 md:pt-12">
+    <div className="grid justify-center py-8 md:pt-12">
       <div className="flex justify-center">
         <Link href="/">
           <a>
@@ -17,7 +17,7 @@ export default function SignInPage({ providers, session, csrfToken }) {
       <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
         Welcome Back!
       </h1>
-      <h2 className="text-xl italic text-center md:text-xl lg:text-2xl font-medium">
+      <h2 className="text-xl italic text-center md:text-xl lg:text-2xl font-medium mb-5">
         Sign in to your existing account.
       </h2>
       <SignIn csrfToken={csrfToken} />

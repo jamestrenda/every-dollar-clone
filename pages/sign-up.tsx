@@ -7,7 +7,7 @@ import SignUp from '../components/signUp';
 
 export default function SignUpPage({ csrfToken }) {
   return (
-    <div className="grid justify-center p-8 pb-12">
+    <div className="grid justify-center py-8 md:pt-12">
       <div className="flex justify-center">
         <Link href="/">
           <a>
@@ -18,9 +18,9 @@ export default function SignUpPage({ csrfToken }) {
       <h1 className="text-4xl md:text-5xl text-center lg:text-6xl font-bold text-indigo-500 leading-[1.2] md:leading-[1.2] lg:leading-[1.2] mb-5 mt-5">
         Open a Free Account
       </h1>
-      <p className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-2 max-w-md mx-auto">
+      <p className="text-xl italic text-center md:text-xl lg:text-2xl font-bold mb-5 max-w-md mx-auto">
         Great decision. But don't stop now. Sign up today and start telling your
-        money what to do.
+        money where to go.
       </p>
       <SignUp csrfToken={csrfToken} />
     </div>

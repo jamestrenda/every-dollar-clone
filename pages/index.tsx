@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useModal } from '../components/modalStateProvider';
 import { getCsrfToken, getSession, useSession } from 'next-auth/react';
 import { SignInSignUp } from '../components/signInSignUp';
+import Link from 'next/link';
 
 const StyledHomepageBanner = styled.div`
   background-image: url('/gray-10-dot-brush-bottom.svg');
@@ -32,9 +33,13 @@ function HomePage({ csrfToken }) {
   return (
     <StyledHomepageBanner className="bg-indigo-900 p-5">
       <div className="flex justify-between items-center">
-        <Logo responsive />
+        <Link href="/">
+          <a>
+            <Logo responsive />
+          </a>
+        </Link>
         {status === 'authenticated' ? (
-          <p>Account</p>
+          <Button href="/account">Account</Button>
         ) : (
           <Button
             onClick={() =>
