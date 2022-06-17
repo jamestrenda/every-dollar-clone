@@ -3,12 +3,9 @@ import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
 import tw from 'twin.macro';
 import useForm from '../../lib/useForm';
-import router from 'next/router';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import { Logo } from '../logo';
 import { Button } from '../button';
-import { FaApple, FaGoogle, FaGithub, FaFacebookF } from 'react-icons/fa';
+// import { FaApple, FaGoogle, FaGithub, FaFacebookF } from 'react-icons/fa';
 import { StyledField, StyledForm, StyledInput } from '../../components/signUp';
 import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
@@ -26,7 +23,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
     password: '',
   });
 
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const { closeModal } = useModal();
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
@@ -78,7 +75,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
       setErrors(null);
       resetForm();
       closeModal();
-      if (res.ok) router.push('/account');
+      if (res.ok) push('/account');
     }
   };
   return (
@@ -125,9 +122,15 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
           {loading ? <Spinner /> : 'Sign In'}
         </Button>
         <div className="block text-center">
-          <Link href="/account/forgot">
+          <button
+            type="button"
+            onClick={() => {
+              closeModal();
+              push('/account/forgot');
+            }}
+          >
             <a className="text-indigo-500">Forgot Password?</a>
-          </Link>
+          </button>
         </div>
       </StyledForm>
       <div className="">
