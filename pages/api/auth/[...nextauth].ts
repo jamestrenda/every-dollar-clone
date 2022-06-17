@@ -109,6 +109,8 @@ export default NextAuth({
 
           // don't expose the user's password or other sensitive data!!!
           delete user.password;
+          delete user.resetToken;
+          delete user.resetTokenExpiry;
           delete user.createdAt;
           delete user.updatedAt;
 
