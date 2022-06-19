@@ -60,9 +60,9 @@ export const SINGLE_ACCOUNT_QUERY = extendType({
       type: Account,
       args: { id: nonNull(intArg()) },
       async resolve(_parent, args, ctx) {
-        return await ctx.prisma.account.findUnique({
+        return await ctx.prisma.account.findFirst({
           where: {
-            id: args.id,
+            userId: args.id,
           },
         });
       },

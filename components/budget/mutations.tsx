@@ -7,3 +7,11 @@ export const CREATE_BUDGET_MUTATION = gql`
     }
   }
 `;
+
+export const UPDATE_CATEGORY_INDEXES_MUTATION = gql`
+  mutation UPDATE_CATEGORY_INDEXES_MUTATION($data: [BudgetItemIndexInput!]!) {
+    updateCategoryIndexes(data: $data) {
+      id
+    }
+  }
+`;

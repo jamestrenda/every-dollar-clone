@@ -7,9 +7,7 @@ import {
   queryField,
   mutationField,
 } from 'nexus';
-// import { Transaction } from './Transaction';
-// import { Budget } from './Budget';
-// import { Session } from './Session';
+
 import { Account } from './Account';
 import { Message } from './Message';
 import { randomBytes } from 'crypto';
@@ -18,6 +16,7 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { PasswordResetRequestEmailHtml } from '../../components/email/resetRequest';
 import { Budget } from './Budget';
+import { Transaction } from './Transaction';
 
 export const User = objectType({
   name: 'User',
@@ -45,18 +44,18 @@ export const User = objectType({
           .accounts();
       },
     });
-    // t.list.field('transactions', {
-    //   type: Transaction,
-    //   async resolve(parent, _args, ctx) {
-    //     return await ctx.prisma.user
-    //       .findUnique({
-    //         where: {
-    //           id: parent.id,
-    //         },
-    //       })
-    //       .transactions();
-    //   },
-    // });
+    t.list.field('transactions', {
+      type: Transaction,
+      async resolve(parent, _args, ctx) {
+        return await ctx.prisma.user
+          .findUnique({
+            where: {
+              id: parent.id,
+            },
+          })
+          .transactions();
+      },
+    });
     t.list.field('budgets', {
       type: Budget,
       async resolve(parent, _args, ctx) {
@@ -77,12 +76,6 @@ const Role = enumType({
   members: ['SUPER_ADMIN', 'ADMIN', 'USER'],
 });
 
-// export const ALL_USERS_QUERY = queryField('users', {
-//   type: nonNull(User),
-//   async resolve(_parent, _args, ctx) {
-//     return await ctx.prisma.user.findMany();
-//   },
-// });
 export const CURRENT_USER_QUERY = queryField('user', {
   type: nonNull(User),
   args: { id: nonNull(intArg()) },
@@ -90,6 +83,20 @@ export const CURRENT_USER_QUERY = queryField('user', {
     return await ctx.prisma.user.findUnique({
       where: {
         id: args.id,
+      },
+    });
+  },
+});
+
+export const ALL_USER_TRANSACTIONS_QUERY = queryField('userTransactions', {
+  type: nonNull(User),
+  args: { id: nonNull(intArg()) },
+  async resolve(_parent, args, ctx) {
+    return await ctx.prisma.user.findUnique({
+      where: { id: args.id },
+      select: {
+        id: true,
+        transactions: true,
       },
     });
   },

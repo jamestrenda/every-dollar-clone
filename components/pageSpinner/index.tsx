@@ -1,4 +1,3 @@
-import { CgSpinner } from 'react-icons/cg';
 import { Spinner } from '../spinner';
 
 type PageLoaderProps = {
@@ -8,7 +7,7 @@ type PageLoaderProps = {
 };
 export const PageSpinner = ({
   align,
-  size,
+  size = 'h-8 w-8',
   className = '',
 }: PageLoaderProps) => {
   return (

@@ -10,6 +10,8 @@ import Layout from '../components/layout';
 import '../lib/tailwind.css';
 import { ModalStateProvider } from '../components/modalStateProvider';
 import { NextPage } from 'next';
+import { TransactionMenuStateProvider } from '../components/transactionMenuProvider';
+import { SidebarStateProvider } from '../components/sidebarStateProvider';
 
 // function Loading() {
 //   const router = useRouter();
@@ -51,23 +53,27 @@ function MyApp({
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
         <ModalStateProvider>
-          <LazyMotion features={domAnimation}>
-            <m.div
-              key={router.route}
-              initial="pageInitial"
-              animate="pageAnimate"
-              variants={{
-                pageInitial: {
-                  opacity: 0,
-                },
-                pageAnimate: {
-                  opacity: 1,
-                },
-              }}
-            >
-              {getLayout(<Component {...pageProps} />)}
-            </m.div>
-          </LazyMotion>
+          <TransactionMenuStateProvider>
+            <SidebarStateProvider>
+              <LazyMotion features={domAnimation}>
+                <m.div
+                  key={router.route}
+                  initial="pageInitial"
+                  animate="pageAnimate"
+                  variants={{
+                    pageInitial: {
+                      opacity: 0,
+                    },
+                    pageAnimate: {
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  {getLayout(<Component {...pageProps} />)}
+                </m.div>
+              </LazyMotion>
+            </SidebarStateProvider>
+          </TransactionMenuStateProvider>
         </ModalStateProvider>
       </ApolloProvider>
     </SessionProvider>
