@@ -18,6 +18,8 @@ model Budget {
   userId       Int
   updatedAt    DateTime      @updatedAt
   createdAt    DateTime      @default(now())
+  month        String
+  year         String
   transactions Transaction[]
   debts        Debt[]
   // favorites    Favorite[]

@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { gql } from '@apollo/client';
 import { isAfter } from 'date-fns';
 import { AddTransactionButton } from '../addTransactionButton';
 import { BudgetContext } from '../budgetProvider';
@@ -65,7 +64,11 @@ export const TransactionMenu = () => {
       <div className="">
         <div className="text-lg font-bold mb-2">Transactions</div>
 
-        <AddTransactionButton small className="flex items-center mr-2">
+        <AddTransactionButton
+          context={budget}
+          small
+          className="flex items-center mr-2"
+        >
           Add New
         </AddTransactionButton>
       </div>

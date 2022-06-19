@@ -20,6 +20,9 @@ import { useSidebar } from '../sidebarStateProvider';
 import { useModal } from '../modalStateProvider';
 import { DELETE_CATEGORY_MUTATION } from './mutations';
 import { StyledDropDown } from './styles';
+import toast from 'react-hot-toast';
+import { StyledButton, StyledToast } from '../transactionItem/styles';
+import { BiUndo } from 'react-icons/bi';
 
 export const EnvelopeFooter = ({ type }) => {
   const {
@@ -65,8 +68,22 @@ export const EnvelopeFooter = ({ type }) => {
         cache.gc();
       },
     });
-    // setModal({ ...modal, visible: false });
     resetModal();
+    toast.custom(
+      (t) => (
+        <StyledToast
+          className={` ${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } bg-white text-red-500 flex items-center justify-between px-6 py-4 shadow-md rounded-md min-w-[200px] max-w-md transition-all`}
+        >
+          <RiFileShredLine />
+          <div className="ml-2 text-sm font-medium">
+            Shredded <span className="font-bold">'{name}'</span> Envelope
+          </div>
+        </StyledToast>
+      ),
+      { position: 'top-right' }
+    );
   };
 
   if (type.length) {
@@ -136,7 +153,7 @@ export const EnvelopeFooter = ({ type }) => {
             />
             {!type.length && (
               <Dropdown.Item
-                className="group shred p-3 mt-2 bg-gray-100 hover:bg-red-500"
+                className="group shred p-3 mt-2 bg-gray-50 hover:bg-red-500"
                 onClick={() =>
                   setModal({
                     title: `Shred '${name}' Envelope`,

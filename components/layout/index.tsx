@@ -10,6 +10,8 @@ import { PageSpinner } from '../pageSpinner';
 import { BudgetProvider } from '../budgetProvider';
 import { useTransactionMenu } from '../transactionMenuProvider';
 import { useSidebar } from '../sidebarStateProvider';
+import { useRouter } from 'next/router';
+import { relative } from 'path';
 const GlobalStyles = createGlobalStyle`
   html {
     // custom-properties
@@ -22,7 +24,9 @@ const GlobalStyles = createGlobalStyle`
 
 const Layout = ({ children }) => {
   const { data: session, status } = useSession();
+  const { asPath, push } = useRouter();
   const loading = status === 'loading';
+  const authenticated = status === 'authenticated';
 
   const { setActiveItem } = useSidebar();
   const { modal } = useModal();
@@ -38,12 +42,19 @@ const Layout = ({ children }) => {
     }
   };
 
+  if (authenticated) {
+    if (asPath === '/account/verify-email') {
+      push('/budget');
+      return <PageSpinner />;
+    }
+  }
+
   return (
     <>
       <GlobalStyles />
       {loading ? (
         <PageSpinner />
-      ) : session ? (
+      ) : authenticated ? (
         <div
           className="flex max-h-screen overflow-hidden"
           onClick={handleClick}
@@ -68,9 +79,13 @@ const Layout = ({ children }) => {
             variants={{
               modalInitial: {
                 opacity: 0,
+                position: 'fixed',
+                zIndex: 9999,
               },
               modalAnimate: {
                 opacity: 1,
+                position: 'fixed',
+                zIndex: 9999,
               },
             }}
           >

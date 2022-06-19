@@ -20,48 +20,30 @@ import {
   CREATE_BUDGET_MUTATION,
   UPDATE_CATEGORY_INDEXES_MUTATION,
 } from './mutations';
-import {
-  DELETE_BUDGET_MUTATION,
-  SINGLE_BUDGET_BY_MONTH_QUERY,
-  SINGLE_BUDGET_QUERY,
-} from './queries';
+import { DELETE_BUDGET_MUTATION, SINGLE_BUDGET_QUERY } from './queries';
 
 export const Budget = () => {
   const { data: session, status } = useSession();
   const loadingSession = status === 'loading';
   const currentDate = new Date();
   const currentMonth = formatDate(currentDate, 'MMMM');
-  const [activeBudget, setActiveBudget] = useState(
-    format(currentDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")
-  );
+  const currentYear = formatDate(currentDate, 'y');
+  const [activeBudget, setActiveBudget] = useState(null);
   const [activeBudgetId, setActiveBudgetId] = useState(null);
   const [categories, setCategories] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [closedEnvelopes, setClosedEnvelopes] = useState([]);
   const [showSpent, setShowSpent] = useState(false);
 
-  const [budget, { data: lazyData, loading: lazyLoading, error: lazyError }] =
-    useLazyQuery(SINGLE_BUDGET_QUERY, {
-      onCompleted: async (data) => {
-        if (data?.budget) {
-          setActiveBudgetId(data.budget.id);
-          const sortCategoriesByIndex = await sortBy(data.budget?.categories, [
-            (category) => category.index,
-          ]);
-          const sortIncomesByIndex = sortBy(data.budget?.incomes, [
-            (income) => income.index,
-          ]);
-          setCategories(sortCategoriesByIndex);
-          setIncomes(sortIncomesByIndex);
-        }
-      },
-    });
-
-  const { data, loading, error } = useQuery(SINGLE_BUDGET_BY_MONTH_QUERY, {
-    variables: { date: activeBudget },
+  const { data, loading, error } = useQuery(SINGLE_BUDGET_QUERY, {
+    variables: {
+      userId: session.user.id,
+      month: formatDate(currentDate, 'M'),
+      year: currentYear,
+    },
     onCompleted: async (data) => {
-      if (data?.budgetByMonth) {
-        setActiveBudgetId(data.budgetByMonth.id);
+      if (data?.budget) {
+        setActiveBudgetId(data.budget.id);
         const sortCategoriesByIndex = await sortBy(data.budget?.categories, [
           (category) => category.index,
         ]);
@@ -79,6 +61,16 @@ export const Budget = () => {
     { loading: createBudgetLoading, error: createBudgetError },
   ] = useMutation(CREATE_BUDGET_MUTATION, {
     variables: { userId: session?.user?.id },
+    refetchQueries: [
+      {
+        query: SINGLE_BUDGET_QUERY,
+        variables: {
+          userId: session.user.id,
+          month: formatDate(currentDate, 'M'),
+          year: currentYear,
+        },
+      },
+    ],
   });
   const [
     deleteBudget,
@@ -169,7 +161,7 @@ export const Budget = () => {
       },
     } = await createBudget();
 
-    const res = await budget({ variables: { id } });
+    // const res = await budget({ variables: { id } });
   };
   const toggleSpent = () => {
     setShowSpent(!showSpent);
@@ -182,22 +174,17 @@ export const Budget = () => {
     if (localStorageRef) {
       setClosedEnvelopes(JSON.parse(localStorageRef));
     }
-
-    // set active budget
-    // if (!activeBudget) {
-    // }
   }, []);
+  useEffect(() => {
+    // set active budget
+    if (!activeBudget) {
+    }
+  }, [data]);
 
   if (createBudgetLoading || loading) return <PageSpinner />;
 
-  // if (lazyData?.budget || data?.budgetByMonth) {
-  if (lazyData?.budget || data?.budget) {
-    const budgetById = lazyData?.budget;
-    const budgetByMonth = data?.budgetByMonth;
-
-    const budget = budgetById || budgetByMonth;
-
-    const currentBudgetMonth = formatDate(budget.createdAt, 'MMMM');
+  if (data?.budget) {
+    const { budget } = data;
 
     const ctx = {
       budget,

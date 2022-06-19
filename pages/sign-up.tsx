@@ -7,7 +7,7 @@ import SignUp from '../components/signUp';
 
 export default function SignUpPage({ csrfToken }) {
   return (
-    <div className="grid justify-center py-8 md:pt-12">
+    <div className="grid justify-center py-8 md:pt-12 bg-gray-50">
       <div className="flex justify-center">
         <Link href="/">
           <a>

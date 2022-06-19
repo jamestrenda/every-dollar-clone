@@ -96,6 +96,8 @@ export const Budget = objectType({
     });
     t.dateTime('createdAt');
     t.dateTime('updatedAt');
+    t.string('month');
+    t.string('year');
   },
 });
 
@@ -112,9 +114,16 @@ export const CREATE_BUDGET_MUTATION = mutationField('createBudget', {
     //     },
     //   })
     //   .categories();
+
+    const currentDate = new Date();
+    const month = formatDate(currentDate, 'M');
+    const year = formatDate(currentDate, 'yyyy');
+
     return await ctx.prisma.budget.create({
       data: {
         userId: args.userId,
+        month,
+        year,
         incomes: {
           create: [
             {
@@ -415,20 +424,17 @@ export const ALL_BUDGETS_QUERY = queryField('budgets', {
   },
 });
 
-export const SINGLE_BUDGET_BY_MONTH_QUERY = queryField('budgetByMonth', {
+export const SINGLE_BUDGET_QUERY = queryField('budget', {
   type: Budget,
-  args: { id: intArg(), date: stringArg() },
+  args: { userId: intArg(), month: stringArg(), year: stringArg() },
   async resolve(_parent, args, ctx) {
     // do something with the date
 
     // 1. get the month and year of the date passed in
-    let monthSelected;
-    let yearSelected;
 
-    if (args.date) {
-      monthSelected = formatDate(args.date, 'MM');
-      yearSelected = formatDate(args.date, 'yyyy');
-    }
+    // const month = formatDate(currentDate, 'M');
+    // const year = formatDate(currentDate, 'yyyy');
+
     // 2. find the budget with a createdAt value that within the same month and year
     //    in other words, less then or equal to the provided date
     //    AND
@@ -436,25 +442,12 @@ export const SINGLE_BUDGET_BY_MONTH_QUERY = queryField('budgetByMonth', {
     return await ctx.prisma.budget.findFirst({
       where: {
         AND: [
-          { createdAt: { lte: new Date(args.date) } },
+          { userId: args.userId },
+          { month: args.month },
           {
-            createdAt: {
-              gte: new Date(`${yearSelected}-${monthSelected}-01T00:00:00.000`),
-            },
+            year: args.year,
           },
         ],
-      },
-    });
-  },
-});
-
-export const SINGLE_BUDGET_BY_ID_QUERY = queryField('budget', {
-  type: Budget,
-  args: { id: intArg(), date: stringArg() },
-  async resolve(_parent, args, ctx) {
-    return await ctx.prisma.budget.findFirst({
-      where: {
-        id: args.id,
       },
     });
   },

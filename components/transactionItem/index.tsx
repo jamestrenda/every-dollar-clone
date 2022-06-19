@@ -2,63 +2,16 @@ import { gql, useMutation } from '@apollo/client';
 import toast from 'react-hot-toast';
 import { BiUndo } from 'react-icons/bi';
 import { RiFileShredLine } from 'react-icons/ri';
-import styled from 'styled-components';
-import tw from 'twin.macro';
 import { formatDate } from '../../lib/formatDate';
 import formatNumber from '../../lib/formatNumber';
-// import { LoadingState } from '../LoadingState';
 import { useModal } from '../modalStateProvider';
 import { useSidebar } from '../sidebarStateProvider';
-
-const SOFT_DELETE_MUTATION = gql`
-  mutation SOFT_DELETE_MUTATION($id: Int!) {
-    softDeleteTransaction(id: $id) {
-      id
-    }
-  }
-`;
-
-const RESTORE_DELETED_ITEM_MUTATION = gql`
-  mutation RESTORE_DELETED_ITEM_MUTATION($id: Int!) {
-    restoreTransaction(id: $id) {
-      id
-    }
-  }
-`;
-
-const DELETED_TRANSACTION_MUTATION = gql`
-  mutation DELETED_TRANSACTION_MUTATION($id: Int!) {
-    deleteTransaction(id: $id) {
-      id
-    }
-  }
-`;
-
-const StyledToast = styled.div`
-  opacity 0;
-  transform: translateY(-2rem);
-
-  /* ${tw`opacity-0 transition-all`}; */
-  /* ${tw`opacity-0 transition-all scale-50 transform -translate-y-6`}; */
-
-  &.animate-enter {
-    opacity: 1;
-    transform: translateY(0rem);
-    /* ${tw`opacity-100 scale-100`}; */
-  }
-  &.animate-leave {
-    /* ${tw`opacity-0 scale-75`}; */
-
-    opacity: 0 !important;
-    transform: translateY(-2rem);
-    /* opacity: 0; */
-    /* opacity-0 scale-75 -translate-y-6 */
-  }
-`;
-
-const StyledButton = styled.button`
-  ${tw`text-xs uppercase font-bold text-white py-1 px-2 rounded-full cursor-pointer transition-all mr-2 last:mr-0`}
-`;
+import {
+  DELETED_TRANSACTION_MUTATION,
+  RESTORE_DELETED_ITEM_MUTATION,
+  SOFT_DELETE_MUTATION,
+} from './mutations';
+import { StyledButton, StyledToast } from './styles';
 
 export const TransactionItem = ({ item, deleted = false }) => {
   const { activeItem } = useSidebar();

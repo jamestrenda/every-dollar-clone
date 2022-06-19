@@ -10,7 +10,7 @@ const StyledTextDivder = styled.div`
 export const TextDivider = ({ text }: { text: string }) => {
   return (
     <StyledTextDivder className="text-center my-8 ">
-      <span className="relative bg-white p-2 z-[2] leading-[1] italic text-gray-400">
+      <span className="relative bg-gray-50 p-2 z-[2] leading-[1] italic text-gray-400">
         {text}
       </span>
     </StyledTextDivder>

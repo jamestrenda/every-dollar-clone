@@ -224,7 +224,7 @@ export const ItemOverview = () => {
           {parent}
         </div>
         <div className="text-gray-400 text-sm">
-          {titles[type.toLowerCase()]}
+          {titles[type?.toLowerCase()]}
         </div>
       </div>
       <div className="mt-2 flex justify-between text-lg font-bold my-2">
@@ -270,7 +270,11 @@ export const ItemOverview = () => {
           {activeTransactions?.length === 1 ? '' : 's'}
         </div>
         <div>
-          <AddTransactionButton className="flex items-center" small>
+          <AddTransactionButton
+            context={budget}
+            className="flex items-center"
+            small
+          >
             Add New
           </AddTransactionButton>
         </div>

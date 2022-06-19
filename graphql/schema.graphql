@@ -27,10 +27,12 @@ type Budget {
   debts: [Debt]
   id: Int
   incomes: [Income]
+  month: String
   transactions: [Transaction]
   updatedAt: DateTime
   user: User!
   userId: Int
+  year: String
 }
 
 type BudgetItem {
@@ -127,8 +129,7 @@ type Mutation {
 type Query {
   account(id: Int!): Account
   accounts: [Account!]
-  budget(date: String, id: Int): Budget
-  budgetByMonth(date: String, id: Int): Budget
+  budget(month: String, userId: Int, year: String): Budget
   budgetItem(id: Int!): BudgetItem
   budgetItems: [BudgetItem!]
   budgets: [Budget!]

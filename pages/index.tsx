@@ -6,6 +6,8 @@ import { useModal } from '../components/modalStateProvider';
 import { getCsrfToken, getSession, useSession } from 'next-auth/react';
 import { SignInSignUp } from '../components/signInSignUp';
 import Link from 'next/link';
+import { PageSpinner } from '../components/pageSpinner';
+import { useRouter } from 'next/router';
 
 const StyledHomepageBanner = styled.div`
   background-image: url('/gray-10-dot-brush-bottom.svg');
@@ -17,18 +19,14 @@ function HomePage({ csrfToken }) {
   const { data: session, status } = useSession();
   const { setModal } = useModal();
 
-  // const html = React.createElement('p', {
-  //   children: (
-  //     <>
-  //       Are you sure you want to delete{' '}
-  //       <span className="font-bold">{item.name}</span>?
-  //     </>
-  //   ),
-  // });
+  // const userSession = useSession();
+  const { push } = useRouter();
 
-  // I wasn't originally doing a redirect on the homepage if a user was logged in,
-  // so the session logic is irrelevant now, but I'm going to leave it for right now
-  // in case I change my mind
+  if (session) {
+    push('/budget');
+  }
+
+  if (session) return <PageSpinner />;
 
   return (
     <StyledHomepageBanner className="bg-indigo-900 p-5">

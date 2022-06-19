@@ -1,12 +1,22 @@
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { getCsrfToken } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Logo } from '../../components/logo';
+import { PageSpinner } from '../../components/pageSpinner';
 import SignIn from '../../components/signIn';
 
-export default function SignInPage({ providers, session, csrfToken }) {
+export default function SignInPage({ csrfToken }) {
+  const userSession = useSession();
+  const { push } = useRouter();
+
+  if (userSession.data) {
+    push('/budget');
+  }
+
+  if (userSession.data) return <PageSpinner />;
   return (
-    <div className="grid justify-center py-8 md:pt-12">
+    <div className="grid justify-center py-8 md:pt-12 bg-gray-50">
       <div className="flex justify-center">
         <Link href="/">
           <a>

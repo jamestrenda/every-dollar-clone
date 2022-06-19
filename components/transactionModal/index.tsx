@@ -757,14 +757,14 @@ export const TransactionModal = () => {
                 </div>
                 <div className="mt-4">
                   <div>
-                    {!transactionItems.length && (
+                    {/* {!transactionItems.length && (
                       <Notice
                         className="mb-4"
                         type="warning"
                         heading
                         message="At least one budget item is required."
                       />
-                    )}
+                    )} */}
                     {transactionItems?.map((transactionItem, index) => (
                       <div
                         key={transactionItem.key}
