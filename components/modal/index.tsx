@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useModal } from '../modalStateProvider';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { RiFileShredLine } from 'react-icons/ri';
 import { CloseButton } from '../closeButton';
 import { TransactionModal } from '../transactionModal';
-// import { useSidebar } from '../SidebarStateProvider';
+import { Spinner } from '../spinner';
+import { useSidebar } from '../sidebarStateProvider';
 // import { TransactionModal } from '../TransactionModal';
 // const html = React.createElement('p', {
 //   children: (
@@ -16,8 +17,8 @@ import { TransactionModal } from '../transactionModal';
 // });
 export const Modal = () => {
   const { modal, resetModal, closeModal } = useModal();
-  // const { activeItem } = useSidebar();
-  const activeItem = null; // temporarily set activeItem to null until we're ready to implement sidebar
+  const { activeItem } = useSidebar();
+  const [loading, setLoading] = useState(false);
 
   const handleKeyDown = (e) => {
     const { key } = e;
@@ -67,20 +68,24 @@ export const Modal = () => {
                 <div className="sm:flex sm:items-start p-5">
                   <div
                     className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10 ${
-                      modal?.type === 'error' ? 'bg-red-100' : ''
+                      modal?.type === 'error' ||
+                      modal?.type.toLowerCase() === 'delete'
+                        ? 'bg-red-100'
+                        : ''
                     } ${modal?.type === 'warning' ? 'bg-yellow-100' : ''} ${
                       modal?.type === 'info' ? 'bg-blue-100' : ''
                     } ${modal?.type === 'positive' ? 'bg-green-100' : ''}`}
                   >
-                    {/* <!-- Heroicon name: outline/exclamation --> */}
-                    {activeItem ? (
+                    {activeItem || modal?.type.toLowerCase() === 'delete' ? (
                       <FaRegTrashAlt className="text-red-500" />
                     ) : modal?.btnText?.includes('shred') ? (
                       <RiFileShredLine className="text-red-500" />
                     ) : (
                       <svg
                         className={`h-6 w-6 ${
-                          modal?.type === 'error' ? 'text-red-500' : ''
+                          modal?.type === 'error' || modal?.type.toLowerCase()
+                            ? 'text-red-500'
+                            : ''
                         } ${
                           modal?.type === 'warning' ? 'text-yellow-500' : ''
                         } ${modal?.type === 'info' ? 'text-blue-500' : ''} ${
@@ -122,11 +127,13 @@ export const Modal = () => {
                     type="button"
                     onClick={async () => {
                       const { callback } = modal;
+                      setLoading(true);
                       await callback();
                       closeModal();
                     }}
                     className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2  text-base font-medium text-white  focus:outline-none focus:ring-2 focus:ring-offset-2  sm:ml-3 sm:w-auto sm:text-sm ${
-                      modal?.type === 'error'
+                      modal?.type === 'error' ||
+                      modal?.type.toLowerCase() === 'delete'
                         ? 'bg-red-500 hover:bg-red-600 focus:ring-red-400'
                         : ''
                     } ${
@@ -143,7 +150,7 @@ export const Modal = () => {
                         : ''
                     }`}
                   >
-                    {modal?.btnText}
+                    {loading ? <Spinner /> : modal?.btnText}
                   </button>
                   <button
                     type="button"

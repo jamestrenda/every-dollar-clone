@@ -111,6 +111,7 @@ type Mutation {
   deleteDebt(id: Int!): Debt!
   deleteIncome(budgetId: Int!, id: Int!): Income!
   deleteTransaction(id: Int!): Transaction
+  deleteUser(id: Int!): User!
   requestReset(email: String!): Message
   resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
   restoreTransaction(id: Int!): Transaction

@@ -228,6 +228,16 @@ export const PASSWORD_RESET_MUTATION = mutationField('resetPassword', {
   },
 });
 
+export const DELETE_USER_MUTATION = mutationField('deleteUser', {
+  type: nonNull(User),
+  args: { id: nonNull(intArg()) },
+  async resolve(_parent, args, ctx) {
+    return await ctx.prisma.user.delete({
+      where: { id: args.id },
+    });
+  },
+});
+
 // Email HTML body
 function html({
   url,

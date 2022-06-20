@@ -127,7 +127,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Sort By Name</span>
                 </span>
               }
-              onClick={() => console.log('something else click')}
+              onClick={() => alert('feature not live yet.')}
             />
             <Dropdown.Item
               className="group"
@@ -138,7 +138,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Sort By Planned</span>
                 </span>
               }
-              onClick={() => console.log('something else click')}
+              onClick={() => alert('feature not live yet.')}
             />
 
             <Dropdown.Item
@@ -149,7 +149,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Reset</span>
                 </span>
               }
-              onClick={() => console.log('reset clicked!')}
+              onClick={() => alert('feature not live yet.')}
             />
             {!type.length && (
               <Dropdown.Item

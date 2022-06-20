@@ -150,7 +150,7 @@ export default NextAuth({
         // 1. check if username/email exists
         const existingUser = await prisma.user.findUnique({
           where: {
-            email,
+            email: email.toLowerCase(),
           },
         });
         if (existingUser) return null;
@@ -166,7 +166,7 @@ export default NextAuth({
           data: {
             firstName,
             lastName,
-            email,
+            email: email.toLowerCase(),
             password: hash,
           },
           select: {

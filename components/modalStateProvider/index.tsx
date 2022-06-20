@@ -1,8 +1,17 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 const LocalStateContext = createContext(null);
 
+interface IModalProps {
+  visible: boolean;
+  title?: string;
+  message: string;
+  btnText?: string;
+  callback?: void | null;
+  type: 'info' | 'error' | 'success' | 'warning' | 'transaction';
+}
+
 const ModalStateProvider = ({ children }: { children: ReactNode }) => {
-  const [modal, setModal] = useState({
+  const [modal, setModal] = useState<IModalProps>({
     visible: false,
     title: '',
     message: '',

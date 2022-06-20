@@ -269,7 +269,7 @@ export const TransactionModal = () => {
     // re-create the options list for the drop down
 
     // TODO: uncomment this once transaction code fully copied over
-    // reorderOptions();
+    reorderOptions();
 
     // and set the drop down value to null, so that we'll always
     // trigger an onChange event when choosing an item from the drop down

@@ -247,7 +247,7 @@ export const Budget = () => {
                 Delete Budget
               </Button> */}
             </div>
-            <BudgetFooter />
+            {/* <BudgetFooter /> */}
           </div>
           <BudgetSidebar />
           <AddTransactionButton

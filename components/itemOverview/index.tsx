@@ -271,7 +271,7 @@ export const ItemOverview = () => {
         </div>
         <div>
           <AddTransactionButton
-            context={budget}
+            context={{ budget }}
             className="flex items-center"
             small
           >

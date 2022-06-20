@@ -7,9 +7,11 @@ type ButtonProps = {
   children: React.ReactNode;
   disabled?: boolean;
   href?: string;
-  innerStyle?: string; // to pass through additional tailwind class names to the inner html
+  innerStyle?: any; // to pass through additional tailwind class names to the inner html
   onClick?: () => void;
   type?: 'button' | 'submit';
+  size?: 'small' | 'medium' | 'large';
+  rounded?: 'full' | 'none' | 'medium';
 };
 
 const buttonStyles = css`

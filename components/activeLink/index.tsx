@@ -43,7 +43,7 @@ const ActiveLink = ({ children, activeClassName, ...props }) => {
   ]);
 
   return (
-    <Link {...props}>
+    <Link href={asPath} {...props}>
       {React.cloneElement(child, {
         className: className || null,
       })}
