@@ -99,7 +99,7 @@ export const CreateEnvelope = ({ id }) => {
             className="text-indigo-500 ml-4"
             size="w-5 h-5"
           />{' '}
-          <span className="ml-6">Creating Envelope...</span>
+          <span className="ml-6">Adding Envelope...</span>
         </>
       ) : (
         <>
