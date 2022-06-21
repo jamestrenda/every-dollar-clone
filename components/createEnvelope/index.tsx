@@ -90,7 +90,7 @@ export const CreateEnvelope = ({ id }) => {
     <button
       type="button"
       onClick={handleAddEnvelope}
-      className="relative flex items-center p-6 border border-dotted border-gray-300 rounded-md cursor-pointer hover:text-indigo-500 hover:bg-white transition-all"
+      className="relative flex items-center p-6 border border-dotted border-gray-300 rounded-md cursor-pointer text-gray-500 hover:text-indigo-500 hover:bg-white transition-all"
     >
       {loading ? (
         <>

@@ -216,12 +216,12 @@ export const Envelope = ({
       {({ ctx: { incomes, showSpent, setShowSpent } }) => {
         return (
           <div
-            className={` bg-white rounded-md shadow-md px-0 ${
+            className={`text-sm md:text-base bg-white rounded-md shadow-md px-0 ${
               !type.length ? 'py-4' : 'py-6 '
             }`}
           >
             <div className="grid grid-cols-4 pl-2">
-              <span className="group col-span-2 font-bold text-base flex items-center">
+              <span className="group col-span-2 font-bold flex items-center">
                 <span className={`flex ${type.length ? 'pl-4' : ''}`}>
                   {!type?.length && (
                     <span
@@ -242,7 +242,11 @@ export const Envelope = ({
                         ) : (
                           <>
                             <FaMoneyBillAlt className="mr-2 h-5 w-5 text-green-400" />{' '}
-                            Income for {data}
+                            Income{' '}
+                            <span className="hidden md:inline-block ml-1">
+                              {' '}
+                              for {data}
+                            </span>
                           </>
                         )}
                       </span>
@@ -263,7 +267,7 @@ export const Envelope = ({
                             setCategoryInputWidth({ id: type.id, width });
                           }}
                           style={{ width: categoryInputWidth.width }}
-                          className={`hover:bg-transparent hover:cursor-pointer font-bold focus:bg-gray-50 focus:cursor-text w-28 max-w-xs focus:font-normal`}
+                          className={`text-sm md:text-base hover:bg-transparent hover:cursor-pointer font-bold focus:bg-gray-50 focus:cursor-text w-28 max-w-xs focus:font-normal`}
                         />
                         <span className="min-w-[7rem] absolute inline-block -left-full p-2">
                           {inputs[`category-${type.id}`]}

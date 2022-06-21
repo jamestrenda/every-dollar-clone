@@ -84,7 +84,7 @@ export const BudgetItem = ({
 
   return (
     <StyledBudgetItem
-      className={`bg-white relative px-6 ${
+      className={`bg-white relative px-6 text-sm md:text-base ${
         isDragging ? 'bg-gray-100 drop-shadow-md rounded-md' : ''
       } ${
         activeItem?.id === item.id && item.__typename === activeItem?.__typename

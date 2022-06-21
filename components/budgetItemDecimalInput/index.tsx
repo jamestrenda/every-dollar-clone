@@ -34,7 +34,7 @@ export const BudgetItemDecimalInput = ({
 }: BudgetItemDecimalProps) => {
   return (
     <DecimalInput
-      className={`border-none bg-transparent hover:bg-gray-50 rounded-sm focus:ring-0 px-2 w-full ${className}`}
+      className={`text-sm md:text-base border-none bg-transparent hover:bg-gray-50 rounded-sm focus:ring-0 px-2 w-full ${className}`}
       name={name}
       placeholder={placeholder}
       onFocus={handleFocus}

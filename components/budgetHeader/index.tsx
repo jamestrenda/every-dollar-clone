@@ -1,6 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { AiFillPlusCircle } from 'react-icons/ai';
-import { FaAlignRight, FaEnvelope, FaRegEnvelopeOpen } from 'react-icons/fa';
+import {
+  FaAlignRight,
+  FaEnvelope,
+  FaFolder,
+  FaRegEnvelopeOpen,
+} from 'react-icons/fa';
 import {
   IoAdd,
   IoEllipsisHorizontal,
@@ -109,30 +114,37 @@ export const BudgetHeader = () => {
   const everyDollar = totalPlanned === totalBudgeted;
 
   return (
-    <div className="budgetHeader sticky top-0 py-6 bg-gray-50 w-full border-b border-gray-300 z-50">
+    <div className="budgetHeader sticky top-0 pt-0 pb-3 md:py-6 bg-gray-50 w-full border-b border-gray-300 z-50">
       <span className="block absolute top-0 bottom-0 bg-gray-50 w-6 -left-6"></span>
       <div className="grid grid-cols-3">
         <div className="col-span-2">
-          <h2 className="text-3xl mb-6">[BUDGET PICKER GOES HERE]</h2>
+          <h2 className="text-3xl mb-0 md:mb-6">
+            <span className="hidden md:block">[BUDGET PICKER GOES HERE]</span>
+            <span className="md:hidden text-indigo-500">
+              <button type="button">
+                <FaFolder />
+              </button>
+            </span>
+          </h2>
           {everyDollar ? (
             <p className="text-green-400 font-bold">
               It's an EveryDollar Budget!
             </p>
           ) : (
             <>
-              <p className={`text-lg text-gray-500`}>
+              <p className={`text-sm md:text-lg text-gray-500`}>
                 <span className="font-bold text-black">
                   ${formatNumber(totalPlanned - totalBudgeted)}
                 </span>{' '}
                 left to budget
               </p>
-              <p className="text-sm italic">
+              <p className="text-sm italic hidden md:block">
                 Total Planned Income - Total Budgeted Envelopes
               </p>
             </>
           )}
         </div>
-        <div className="sticky top-0 bg-gray-50 p-6 pr-0 pt-0">
+        <div className="sticky top-0 bg-gray-50 p-6 pr-0 pt-0 pb-0 md:pb-6">
           <ul className="flex items-center justify-end">
             <li className="grid place-items-center">
               <button

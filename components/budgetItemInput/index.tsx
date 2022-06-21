@@ -36,7 +36,7 @@ export const BudgetItemInput = ({
 }: BudgetItemProps) => {
   return (
     <input
-      className={`border-none bg-transparent hover:bg-gray-50 focus:bg-gray-50 rounded-sm focus:ring-0 px-2 w-full ${className}`}
+      className={`text-sm md:text-base border-none bg-transparent hover:bg-gray-50 focus:bg-gray-50 rounded-sm focus:ring-0 px-2 w-full ${className}`}
       type={type}
       name={name}
       id={name}

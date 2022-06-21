@@ -108,7 +108,7 @@ const Layout = ({ children }) => {
           onClick={handleClick}
         >
           <Header />
-          <main className="relative flex-grow bg-gray-50 px-12 overflow-y-scroll overflow-x-hidden">
+          <main className="relative flex-grow bg-gray-50 px-4 lg:px-12 overflow-y-scroll overflow-x-hidden">
             {loading ? (
               <PageSpinner />
             ) : (

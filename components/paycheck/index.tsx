@@ -91,7 +91,7 @@ export const Paycheck = ({
   }, [income]);
   return (
     <StyledBudgetItem
-      className={`relative px-6 ${
+      className={`text-sm md:text-base relative px-6 ${
         isDragging ? 'bg-gray-100 drop-shadow-md rounded-md' : ''
       }  ${
         activeItem?.id === income.id &&
