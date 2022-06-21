@@ -18,11 +18,9 @@ export function Loading({ status }) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const handleStart = (url) => {
-      console.log('route change start called!');
       setLoading(true);
     };
     const handleComplete = (url) => {
-      console.log('route change complete called!');
       setLoading(false);
     };
 
@@ -36,8 +34,6 @@ export function Loading({ status }) {
       router.events.off('routeChangeError', handleComplete);
     };
   });
-
-  console.log('loading called!');
   return loading && <PageSpinner />;
 }
 
@@ -80,7 +76,14 @@ const Layout = ({ children }) => {
   const handleClick = ({ target }) => {
     const overviewSection = target.closest('.sidebar__itemOverview');
     const budgetHeader = target.closest('.budgetHeader');
-    if (!overviewSection && !budgetHeader && !modal.visible && !open) {
+    const toast = target.closest('.toast');
+    if (
+      !overviewSection &&
+      !budgetHeader &&
+      !modal.visible &&
+      !open &&
+      !toast
+    ) {
       // user clicked outside of the overview section in the sidebar, so we'll clear the active item
       // which will display the default sidebar overview
       setActiveItem(null);
@@ -117,11 +120,11 @@ const Layout = ({ children }) => {
                   variants={{
                     pageInitial: {
                       opacity: 0,
-                      height: '100%',
+                      // height: '100%',
                     },
                     pageAnimate: {
                       opacity: 1,
-                      height: '100%',
+                      // height: '100%',
                     },
                   }}
                 >

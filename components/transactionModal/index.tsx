@@ -13,6 +13,7 @@ import { FaMoneyBillAlt, FaMoneyCheck } from 'react-icons/fa';
 import useForm from '../../lib/useForm';
 import { BudgetItemDecimalInput } from '../budgetItemDecimalInput';
 import { BudgetItemInput } from '../budgetItemInput';
+
 // import { GlobalDatePickerStyles } from '../DatePicker/styles';
 import { Dropdown } from 'semantic-ui-react';
 import { BudgetContext } from '../budgetProvider';
@@ -32,6 +33,16 @@ import {
   StyledTransactionFields,
   StyledTransactionTypeRadioGroup,
 } from './styles';
+import {
+  Box,
+  ChakraProvider,
+  Input,
+  Popover,
+  PopoverTrigger,
+} from '@chakra-ui/react';
+import { Calendar } from '@uselessdev/datepicker';
+import { DatePicker } from '../datePicker';
+import { formatDate } from '../../lib/formatDate';
 
 export const TransactionModal = () => {
   const { activeItem } = useSidebar() || {};
@@ -149,7 +160,7 @@ export const TransactionModal = () => {
     transactionDescription: item.description,
     transactionNote: item.note,
     transactionCheckNo: item.checkNo,
-    transactionDate: item.date || new Date(),
+    transactionDate: item.date || formatDate(new Date(), 'MM/dd/yyyy'),
   });
 
   // shape the options that will be passed to the 'Add Split' drop down
@@ -327,6 +338,7 @@ export const TransactionModal = () => {
       // }
     }
   }, [transactionSplitAmounts]);
+
   const isIncomeChecked = inputs['transactionType'] === 'income';
   const isExpenseChecked = inputs['transactionType'] === 'expense';
 
@@ -451,6 +463,7 @@ export const TransactionModal = () => {
     if (item.id) {
       const variables = {
         id: item.id,
+        budgetId: budget.id,
         description: inputs['transactionDescription'],
         total: inputs['transactionTotal'],
         note: inputs['transactionNote'],
@@ -611,6 +624,7 @@ export const TransactionModal = () => {
       });
     } else if (!item.id) {
       const variables = {
+        userId: budget.userId,
         budgetId: budget.id,
         description: inputs['transactionDescription'],
         total: inputs['transactionTotal'],
@@ -732,6 +746,18 @@ export const TransactionModal = () => {
                       noBorder
                       isOutsideRange={() => false}
                     /> */}
+                    {/* <DatePicker /> */}
+                    <BudgetItemInput
+                      name="transactionDate"
+                      type="text"
+                      placeholder="Choose a Date"
+                      value={formatDate(
+                        inputs['transactionDate'],
+                        'MM/dd/yyyy'
+                      )}
+                      className="!pl-10"
+                      handleChange={handleChange}
+                    />
                   </div>
                   <div className="relative ml-2 flex-grow">
                     <MdAttachMoney className="pointer-events-none text-gray-600 h-5 w-5 absolute top-1/2 -translate-y-1/2 left-2" />
@@ -752,7 +778,7 @@ export const TransactionModal = () => {
                     align="center"
                     placeholder="Where did you spend this money?"
                     className="text-sm"
-                    handleChange={() => handleChange}
+                    handleChange={handleChange}
                   />
                 </div>
                 <div className="mt-4">
@@ -791,7 +817,9 @@ export const TransactionModal = () => {
                                   ? transactionSplitAmounts[transactionItem.key]
                                   : 0
                               }
-                              handleChange={handleTransactionSplitAmountChange}
+                              handleChange={() =>
+                                handleTransactionSplitAmountChange
+                              }
                             />
                           ) : (
                             <></>

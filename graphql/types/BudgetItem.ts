@@ -12,6 +12,7 @@ import { connectionFromArraySlice, cursorToOffset } from 'graphql-relay';
 import { Category } from './Category';
 import { TransactionItem } from './TransactionItem';
 import { BudgetItemIndexInput } from './BudgetItemIndexInput';
+import { Transaction } from './Transaction';
 
 export const BudgetItem = objectType({
   name: 'BudgetItem',
@@ -71,13 +72,35 @@ export const ALL_BUDGET_ITEMS_QUERY = extendType({
     });
   },
 });
-
+export const BUDGET_ITEM_TRANSACTION_QUERY = extendType({
+  type: 'Query',
+  definition(t) {
+    t.list.field('budgetItemTransactions', {
+      type: nonNull(TransactionItem),
+      args: { id: nonNull(intArg()) },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.transactionItem.findMany({
+          where: {
+            budgetItemId: args.id,
+          },
+        });
+      },
+    });
+  },
+});
 export const SINGLE_BUDGET_ITEM_QUERY = extendType({
   type: 'Query',
   definition(t) {
     t.field('budgetItem', {
       type: BudgetItem,
       args: { id: nonNull(intArg()) },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.budgetItem.findUnique({
+          where: {
+            id: args.id,
+          },
+        });
+      },
     });
   },
 });

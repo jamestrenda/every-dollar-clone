@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 export const CREATE_TRANSACTION_MUTATION = gql`
   mutation CREATE_TRANSACTION_MUTATION(
+    $userId: Int!
     $budgetId: Int!
     $description: String!
     $total: Int!
@@ -11,6 +12,7 @@ export const CREATE_TRANSACTION_MUTATION = gql`
     $transactionItems: [TransactionItemUpsertInput!]!
   ) {
     createTransaction(
+      userId: $userId
       budgetId: $budgetId
       description: $description
       total: $total
@@ -39,15 +41,17 @@ export const CREATE_TRANSACTION_MUTATION = gql`
 export const UPDATE_TRANSACTION_MUTATION = gql`
   mutation UPDATE_TRANSACTION_MUTATION(
     $id: Int!
-    $description: String
-    $total: Int
+    $description: String!
+    $total: Int!
     $note: String
     $checkNo: String
-    $date: DateTime
+    $date: DateTime!
     $transactionItems: [TransactionItemUpsertInput!]!
+    $budgetId: Int
   ) {
     updateTransaction(
       id: $id
+      budgetId: $budgetId
       description: $description
       total: $total
       note: $note
@@ -56,6 +60,7 @@ export const UPDATE_TRANSACTION_MUTATION = gql`
       transactionItems: $transactionItems
     ) {
       id
+      budgetId
       description
       total
       note

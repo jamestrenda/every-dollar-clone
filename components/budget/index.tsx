@@ -205,7 +205,7 @@ export const Budget = () => {
         <BudgetHeader />
         <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
           <div className="col-span-2">
-            <div className="grid gap-6 mt-6">
+            <div className="grid gap-6 mt-6 pb-10">
               <Envelope type={incomes} data={currentMonth} />
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <Droppable droppableId="envelopes" type="parent">
@@ -255,7 +255,7 @@ export const Budget = () => {
             className="fixed bottom-6 right-6 z-10"
           />
         </div>
-        <Toaster containerClassName="mx-8 mt-4" />
+        <Toaster containerClassName="mx-8 mt-4 toast" />
       </BudgetProvider>
     );
   }

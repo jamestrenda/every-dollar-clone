@@ -41,7 +41,7 @@ export const StyledTransactionFields = styled.div`
   }
   input {
     ${tw`bg-white border border-solid border-gray-300 rounded-md`}
-    padding: 8px !important;
+    padding: 8px;
     font-family: inherit !important;
     font-weight: normal !important;
     font-size: 0.875rem !important;

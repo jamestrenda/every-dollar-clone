@@ -12,15 +12,10 @@ export const BudgetSidebar = () => {
 
   const { activeItem } = useSidebar();
   const { open } = useTransactionMenu();
-  const {
-    ctx: { budget },
-  } = useContext(BudgetContext);
-
-  // const { favorites } = budget;
 
   return (
     <div className="mt-6 col-span-2 lg:col-span-1 sidebar">
-      <div className="sticky top-40 ">
+      <div className="sticky top-48">
         <div
           className={`bg-white transition rounded-md p-6 ${
             open ? 'opacity-0 scale-95' : 'scale-100 shadow-md'

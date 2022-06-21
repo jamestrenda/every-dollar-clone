@@ -71,19 +71,15 @@ export const BudgetItem = ({
   };
   useEffect(() => {
     const transactions = item.transactions?.filter(
-      (transactionItem) => transactionItem.transaction.actve
+      (transaction) => transaction.transaction.active && transaction
     );
+
     const total = transactions.reduce(
       (total, transaction) => total + transaction.amount,
       0
     );
-
-    // TODO: total is not updating
     setSpent(total);
     setRemaining(item.plannedAmount - total);
-
-    // need to refresh the item overview data when a transaction was updated
-    setActiveItem(item);
   }, [item]);
 
   return (
@@ -123,8 +119,8 @@ export const BudgetItem = ({
                   `budgetItemName-${item.id}-parentCategory-${item.parentCategory.id}`
                 ]
               }
-              handleFocus={() => handleFocus}
-              handleChange={() => handleChange}
+              handleFocus={handleFocus}
+              handleChange={handleChange}
               handleBlur={() =>
                 handleBlur(
                   item.name,
@@ -158,8 +154,8 @@ export const BudgetItem = ({
           </span>
           <span
             className={`text-right grid items-center cursor-default ${
-              showSpent ? 'text-green-400' : ''
-            }`}
+              showSpent && spent <= item.plannedAmount ? 'text-green-400' : ''
+            } ${spent > item.plannedAmount ? '!text-red-400' : ''}`}
             onClick={toggleSpent}
           >
             ${formatNumber(showSpent ? spent : remaining)}
@@ -174,6 +170,7 @@ export const BudgetItem = ({
                   ? 'none'
                   : 'block',
             }}
+            negative={spent > item.plannedAmount}
             value={
               (spent /
                 inputs[

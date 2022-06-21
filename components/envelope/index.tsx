@@ -126,14 +126,14 @@ export const Envelope = ({
     } else {
       // get the parent category for the dragged item
       // the droppableId must be a string, so we've structured it to
-      // look like 'ParentCategoryId-{Int}'. Therefore, we can just grab the last
-      // item in the string
-      const parentId = parseInt(
-        source.droppableId.substr(source.droppableId.length - 1)
-      );
+      // look like 'category-{Int}'. Therefore, we can just remove the prefix
+      // and return the Int portion
+      const parentId = parseInt(source.droppableId.replace('category-', ''));
 
       // get the parent category object of the dragged item
+      // const re = /\d+$/;
       const parent = list?.filter((listItem) => listItem.id === parentId)[0];
+
       // get a copy of the budget items for the parent category
       items = [...parent?.budgetItems];
       // re-order the elements in the items array
@@ -251,8 +251,8 @@ export const Envelope = ({
                         <BudgetItemInput
                           name={`category-${type.id}`}
                           value={inputs[`category-${type.id}`]}
-                          handleChange={() => handleChange}
-                          handleBlur={() => handleUpdateCategoryName}
+                          handleChange={handleChange}
+                          handleBlur={handleUpdateCategoryName}
                           handleFocus={(e) =>
                             e.target.setSelectionRange(0, e.target.value.length)
                           }
@@ -363,6 +363,7 @@ export const Envelope = ({
               }}
             >
               <div className="mt-4">
+                {/* if type has a lengh, it means we passed a string, like 'incomes' */}
                 {type.length ? (
                   <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="income">

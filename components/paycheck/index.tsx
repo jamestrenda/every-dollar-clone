@@ -80,12 +80,14 @@ export const Paycheck = ({
   };
 
   useEffect(() => {
-    const total = income?.transactions?.reduce(
+    const transactions = income.transactions?.filter(
+      (transaction) => transaction.transaction.active && transaction
+    );
+    const total = transactions.reduce(
       (total, transaction) => total + transaction.amount,
       0
     );
     setAmountReceived(total);
-    setActiveItem(income);
   }, [income]);
   return (
     <StyledBudgetItem
@@ -122,8 +124,8 @@ export const Paycheck = ({
             <BudgetItemInput
               name={`incomeSource-${income.id}`}
               value={inputs[`incomeSource-${income.id}`]}
-              handleChange={() => handleChange}
-              handleFocus={() => handleFocus}
+              handleChange={handleChange}
+              handleFocus={handleFocus}
               handleBlur={() =>
                 handleBlur(income.source, inputs[`incomeSource-${income.id}`])
               }

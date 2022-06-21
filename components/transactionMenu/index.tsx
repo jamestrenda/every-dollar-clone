@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { isAfter } from 'date-fns';
+import { isAfter, parseISO } from 'date-fns';
 import { AddTransactionButton } from '../addTransactionButton';
 import { BudgetContext } from '../budgetProvider';
 import { CloseButton } from '../closeButton';
@@ -36,7 +36,7 @@ export const TransactionMenu = () => {
             transactionItem.debt
         ).length
     )
-    .sort((a, b) => (isAfter(a.date, b.date) ? -1 : 0));
+    .sort((a, b) => (isAfter(parseISO(a.date), parseISO(b.date)) ? -1 : 0));
   const newTransactions = budget?.transactions
     ?.filter(
       (result) =>
@@ -48,10 +48,10 @@ export const TransactionMenu = () => {
             !transactionItem.debt
         ).length
     )
-    .sort((a, b) => (isAfter(a.date, b.date) ? -1 : 0));
+    .sort((a, b) => (isAfter(parseISO(a.date), parseISO(b.date)) ? -1 : 0));
   const deletedTransactions = budget?.transactions
     ?.filter((result) => !result.active)
-    .sort((a, b) => (isAfter(a.date, b.date) ? -1 : 0));
+    .sort((a, b) => (isAfter(parseISO(a.date), parseISO(b.date)) ? -1 : 0));
 
   const [activeTab, setActiveTab] = useState(2);
   return (
@@ -101,10 +101,11 @@ export const TransactionMenu = () => {
           {newTransactions.length ? (
             newTransactions.map((transaction, index) =>
               transaction.transactionItems.map((transactionItem) => (
-                <>
-                  {/* <p>[transaction item goes here]</p> */}
-                  <TransactionItem key={index} item={transactionItem} />
-                </>
+                <TransactionItem
+                  context={{ budget }}
+                  key={index}
+                  item={transactionItem}
+                />
               ))
             )
           ) : (
@@ -116,10 +117,11 @@ export const TransactionMenu = () => {
           {trackedTransactions.length ? (
             trackedTransactions.map((transaction, index) =>
               transaction.transactionItems.map((transactionItem) => (
-                <>
-                  {/* <p>[transaction item goes here]</p> */}
-                  <TransactionItem key={index} item={transactionItem} />
-                </>
+                <TransactionItem
+                  context={{ budget }}
+                  key={index}
+                  item={transactionItem}
+                />
               ))
             )
           ) : (
@@ -131,10 +133,12 @@ export const TransactionMenu = () => {
           {deletedTransactions.length ? (
             deletedTransactions.map((transaction, index) =>
               transaction.transactionItems.map((transactionItem) => (
-                <>
-                  {/* <p>[transaction item goes here]</p> */}
-                  <TransactionItem deleted key={index} item={transactionItem} />
-                </>
+                <TransactionItem
+                  context={{ budget }}
+                  deleted
+                  key={index}
+                  item={transactionItem}
+                />
               ))
             )
           ) : (

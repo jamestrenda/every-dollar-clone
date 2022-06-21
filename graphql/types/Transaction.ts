@@ -121,7 +121,7 @@ export const UPDATE_TRANSACTION_MUTATION = mutationField('updateTransaction', {
   type: Transaction,
   args: {
     id: nonNull(intArg()),
-    budgetId: nonNull(intArg()),
+    budgetId: intArg(),
     description: nonNull(stringArg()),
     total: nonNull(intArg()),
     note: stringArg(),
@@ -167,6 +167,7 @@ export const UPDATE_TRANSACTION_MUTATION = mutationField('updateTransaction', {
         note: args.note,
         checkNo: args.checkNo,
         date: args.date,
+        budgetId: args.budgetId || null,
         transactionItems: {
           upsert,
           delete: deleteThesIDs,

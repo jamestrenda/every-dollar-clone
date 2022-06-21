@@ -1,3 +1,5 @@
+import { ChangeEventHandler, FocusEventHandler, FormEventHandler } from 'react';
+
 type BudgetItemProps = {
   type?: 'text' | 'number' | 'tel' | 'email';
   value: string;
@@ -10,10 +12,10 @@ type BudgetItemProps = {
     | 'justify'
     | 'match-parent';
   name: string;
-  handleChange?: (e?) => void;
-  handleBlur?: (e?) => void;
-  handleFocus?: (e?) => void;
-  handleInput?: (e?) => void;
+  handleChange?: ChangeEventHandler | undefined;
+  handleBlur?: FocusEventHandler | undefined;
+  handleFocus?: FocusEventHandler | undefined;
+  handleInput?: FormEventHandler | undefined;
   className?: string;
   style?: object;
   placeholder?: string;
@@ -24,10 +26,10 @@ export const BudgetItemInput = ({
   value = '',
   align = 'left',
   name = 'budgetItem',
-  handleChange = null,
-  handleBlur = null,
-  handleFocus = null,
-  handleInput = null,
+  handleChange,
+  handleBlur,
+  handleFocus,
+  handleInput,
   className = '',
   style = {},
   placeholder = '',

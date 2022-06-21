@@ -124,7 +124,7 @@ type Mutation {
   updateDebtIndexes(data: [BudgetItemIndexInput!]!): Debt!
   updateIncome(id: Int!, index: Int, note: String, planned: Int, source: String): Income!
   updateIncomeIndexes(data: [BudgetItemIndexInput!]!): Income!
-  updateTransaction(budgetId: Int!, checkNo: String, date: DateTime!, description: String!, id: Int!, note: String, total: Int!, transactionItems: [TransactionItemUpsertInput!]!): Transaction
+  updateTransaction(budgetId: Int, checkNo: String, date: DateTime!, description: String!, id: Int!, note: String, total: Int!, transactionItems: [TransactionItemUpsertInput!]!): Transaction
 }
 
 type Query {
@@ -132,6 +132,7 @@ type Query {
   accounts: [Account!]
   budget(month: String, userId: Int, year: String): Budget
   budgetItem(id: Int!): BudgetItem
+  budgetItemTransactions(id: Int!): [TransactionItem!]
   budgetItems: [BudgetItem!]
   budgets: [Budget!]
   categories: [Category!]

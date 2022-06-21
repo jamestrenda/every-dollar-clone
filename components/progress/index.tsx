@@ -12,6 +12,7 @@ const StyledProgressBar = styled.progress`
   &::-webkit-progress-value {
     ${tw`bg-green-400 rounded-full`};
     transition: width 0.5s ease-in-out;
+    ${({ negative }) => negative && tw`!bg-red-400`}}
   }
 
   ${({ sidebar }) => sidebar && tw`h-2`}}
@@ -25,6 +26,7 @@ export const Progress = ({
   style = {},
   className = '',
   sidebar = false,
+  negative = false,
 }) => {
   return (
     <StyledProgressBar
@@ -34,6 +36,7 @@ export const Progress = ({
       value={value}
       style={style}
       sidebar={sidebar}
+      negative={negative}
     ></StyledProgressBar>
   );
 };

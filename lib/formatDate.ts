@@ -1,5 +1,7 @@
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 export function formatDate(date: Date | number | string, token?: string) {
-  return format(new Date(date), token ?? 'M/d/yy');
+  let d = new Date(date);
+  if (typeof date === 'string') d = parseISO(date);
+  return format(d, token ?? 'M/d/yy');
 }

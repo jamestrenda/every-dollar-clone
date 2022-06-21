@@ -8,6 +8,7 @@ export const SINGLE_BUDGET_QUERY = gql`
       updatedAt
       month
       year
+      userId
       transactions {
         id
         description
@@ -17,6 +18,7 @@ export const SINGLE_BUDGET_QUERY = gql`
         updatedAt
         date
         active
+        budgetId
         transactionItems {
           id
           transaction {
@@ -28,6 +30,7 @@ export const SINGLE_BUDGET_QUERY = gql`
             updatedAt
             date
             active
+            budgetId
             transactionItems {
               id
               budgetItem {

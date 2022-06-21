@@ -4,8 +4,13 @@ import { BiUndo } from 'react-icons/bi';
 import { RiFileShredLine } from 'react-icons/ri';
 import { formatDate } from '../../lib/formatDate';
 import formatNumber from '../../lib/formatNumber';
+import { SINGLE_BUDGET_QUERY } from '../budget/queries';
 import { useModal } from '../modalStateProvider';
 import { useSidebar } from '../sidebarStateProvider';
+import {
+  SINGLE_BUDGET_ITEM_QUERY,
+  SINGLE_INCOME_QUERY,
+} from '../sidebarStateProvider/queries';
 import {
   DELETED_TRANSACTION_MUTATION,
   RESTORE_DELETED_ITEM_MUTATION,
@@ -13,29 +18,30 @@ import {
 } from './mutations';
 import { StyledButton, StyledToast } from './styles';
 
-export const TransactionItem = ({ item, deleted = false }) => {
-  const { activeItem } = useSidebar();
+export const TransactionItem = ({ item, deleted = false, context }) => {
+  const { activeItem, setActiveItem } = useSidebar();
   const { setModal } = useModal();
-
+  // console.log({ item });
   const [softDeleteTransaction, { data, loading, error }] = useMutation(
     SOFT_DELETE_MUTATION,
-    { variables: { id: item.transaction.id } }
+    {
+      variables: { id: item.id },
+    }
   );
   const [
     restoreTransaction,
     { data: restoreData, loading: restoreLoading, error: restoreError },
   ] = useMutation(RESTORE_DELETED_ITEM_MUTATION, {
-    variables: { id: item.transaction.id },
+    variables: { id: item?.id },
   });
 
   const [
     deleteTransaction,
     { data: deleteData, loading: deleteLoading, error: deleteError },
   ] = useMutation(DELETED_TRANSACTION_MUTATION, {
-    variables: { id: item.transaction.id },
+    variables: { id: item.id },
   });
 
-  // const type = activeItem?.__typename;
   const isBudgetItem = item.budgetItem?.__typename === 'BudgetItem';
   const isIncome = item.income?.__typename === 'Income';
 
@@ -101,6 +107,7 @@ export const TransactionItem = ({ item, deleted = false }) => {
         });
       },
     });
+
     toast.dismiss(t.id);
   };
   const handlePermanentlyDeleteItem = async () => {
@@ -131,7 +138,7 @@ export const TransactionItem = ({ item, deleted = false }) => {
     >
       <div className="text-center text-[.625rem] uppercase z-10">
         <div>{formatDate(item.transaction?.date, 'MMM')}</div>
-        <div>{formatDate(item.transaction?.date, 'D')}</div>
+        <div>{formatDate(item.transaction?.date, 'd')}</div>
       </div>
       <div className="text-sm flex-grow mx-4 z-10">
         {item.transaction?.description}
@@ -154,6 +161,7 @@ export const TransactionItem = ({ item, deleted = false }) => {
                   action: 'Edit',
                   type: 'transaction',
                   item: item.transaction,
+                  context,
                 })
               }
               className="bg-indigo-500 hover:bg-indigo-700"

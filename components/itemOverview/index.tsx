@@ -1,4 +1,4 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { useContext, useEffect, useState } from 'react';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import formatNumber from '../../lib/formatNumber';
@@ -10,7 +10,13 @@ import { useModal } from '../modalStateProvider';
 import { UPDATE_INCOME_MUTATION } from '../paycheck';
 import { Progress } from '../progress';
 import { useSidebar } from '../sidebarStateProvider';
+import {
+  SINGLE_BUDGET_ITEM_QUERY,
+  SINGLE_INCOME_QUERY,
+} from '../sidebarStateProvider/queries';
+import { Spinner } from '../spinner';
 import { TransactionItem } from '../transactionItem';
+import { BUDGET_ITEM_TRANSACTIONS_QUERY } from './queries';
 
 export const CREATE_FAVORITE_MUTATION = gql`
   mutation CREATE_FAVORITE_MUTATION($budgetItemId: Int!, $budgetId: Int!) {
@@ -36,6 +42,8 @@ export const ItemOverview = () => {
   const { activeItem, setActiveItem } = useSidebar();
   const { modal, setModal, resetModal } = useModal();
 
+  // const [transactions, setTransactions] = useState(null);
+
   const handleKeyDown = (e) => {
     const { key } = e;
     if (key) {
@@ -58,13 +66,27 @@ export const ItemOverview = () => {
     };
   });
 
-  const { id, transactions, isFavorite, note } = activeItem;
+  // console.log({ activeItem });
+
+  const { id, isFavorite, note } = activeItem;
   const name = activeItem.name || activeItem.source;
   const planned = activeItem.planned || activeItem.plannedAmount;
   const parent = activeItem.parentCategory?.name || 'Income';
   const type = activeItem.__typename;
   const isBudgetItem = type === 'BudgetItem';
   const isIncome = type === 'Income';
+
+  const {
+    data: budgetItemData,
+    loading: budgetItemLoading,
+    error: budgetItemError,
+  } = useQuery(SINGLE_BUDGET_ITEM_QUERY, { variables: { id } });
+
+  const {
+    data: incomeData,
+    loading: incomeLoading,
+    error: incomeError,
+  } = useQuery(SINGLE_INCOME_QUERY, { variables: { id } });
 
   const [noteValue, setNoteValue] = useState();
 
@@ -78,8 +100,12 @@ export const ItemOverview = () => {
     setNoteValue(value);
   }
 
+  let transactions = isBudgetItem
+    ? budgetItemData?.budgetItem?.transactions
+    : incomeData?.income?.transactions || [];
+
   const activeTransactions = transactions?.filter(
-    (transactionItem) => transactionItem.transaction.active
+    (transaction) => transaction.transaction.active && transaction
   );
 
   const transactionsTotal = activeTransactions?.reduce(
@@ -96,8 +122,13 @@ export const ItemOverview = () => {
       : 0;
 
   const progress = (transactionsTotal / planned) * 100 || 0;
+
   const budgetItemProgress =
-    ((planned - budgetItemTransactionTotal) / planned) * 100 || 100;
+    budgetItemTransactionTotal && budgetItemTransactionTotal <= planned
+      ? ((planned - (planned - budgetItemTransactionTotal)) / planned) * 100
+      : budgetItemTransactionTotal > planned
+      ? 100
+      : 0;
 
   const titles = {
     income: 'Planned',
@@ -111,7 +142,11 @@ export const ItemOverview = () => {
 
   const [
     updateIncome,
-    { data: incomeData, loading: incomeLoading, error: incomeError },
+    {
+      data: updateIncomeData,
+      loading: updateIncomeLoading,
+      error: updateIncomeError,
+    },
   ] = useMutation(UPDATE_INCOME_MUTATION);
 
   const [createFavorite] = useMutation(CREATE_FAVORITE_MUTATION, {
@@ -227,66 +262,85 @@ export const ItemOverview = () => {
           {titles[type?.toLowerCase()]}
         </div>
       </div>
-      <div className="mt-2 flex justify-between text-lg font-bold my-2">
-        <div className=" ">{name}</div>
-        <div>
-          $
-          {formatNumber(
-            isBudgetItem ? budgetItemTransactionTotal || planned : planned || 0,
-            true
-          )}
-        </div>
-      </div>
-      <div className="mb-4">
-        <span className="text-green-400 font-bold mr-1">
-          $
-          {formatNumber(
-            isBudgetItem ? budgetItemTransactionTotal : transactionsTotal || 0,
-            true
-          )}
-        </span>
-        <span>{isBudgetItem ? 'spent' : 'received'}</span>
-      </div>
-      <div>
-        <Progress
-          sidebar
-          value={isBudgetItem ? budgetItemProgress : progress}
-        />
-      </div>
-      <div>
-        <BudgetItemInput
-          className="bg-gray-50 mt-4"
-          style={{ backgroundColor: '#f5f5f5' }}
-          name={noteName}
-          value={noteValue || ''}
-          placeholder="Add a note"
-          handleChange={handleChange}
-          handleBlur={() => handleBlur(noteValue, note)}
-        />
-      </div>
-      <div className="flex justify-between mt-4 items-center">
-        <div className="text-base font-bold text-gray-500">
-          {activeTransactions?.length} Transaction
-          {activeTransactions?.length === 1 ? '' : 's'}
-        </div>
-        <div>
-          <AddTransactionButton
-            context={{ budget }}
-            className="flex items-center"
-            small
-          >
-            Add New
-          </AddTransactionButton>
-        </div>
-      </div>
-      {activeTransactions?.length ? (
-        <div className="border-t border-gray-300">
-          {activeTransactions?.map((transactionItem, index) => (
-            <TransactionItem key={index} item={transactionItem} />
-          ))}
-        </div>
+      {budgetItemLoading ? (
+        <Spinner />
       ) : (
-        <></>
+        <>
+          <div className="mt-2 flex justify-between text-lg font-bold my-2">
+            <div className=" ">{name}</div>
+            <div
+              className={
+                budgetItemTransactionTotal > planned ? 'text-red-500' : ''
+              }
+            >
+              $
+              {formatNumber(
+                isBudgetItem
+                  ? planned - budgetItemTransactionTotal
+                  : planned || 0,
+                true
+              )}
+            </div>
+          </div>
+          <div className="mb-4">
+            <span className="text-green-400 font-bold mr-1">
+              $
+              {formatNumber(
+                isBudgetItem
+                  ? budgetItemTransactionTotal
+                  : transactionsTotal || 0,
+                true
+              )}
+            </span>
+            <span>{isBudgetItem ? 'spent' : 'received'}</span>
+          </div>
+          <div>
+            <Progress
+              negative={budgetItemTransactionTotal > planned}
+              sidebar
+              value={isBudgetItem ? budgetItemProgress : progress}
+            />
+          </div>
+          <div>
+            <BudgetItemInput
+              className="bg-gray-50 mt-4"
+              style={{ backgroundColor: '#f5f5f5' }}
+              name={noteName}
+              value={noteValue || ''}
+              placeholder="Add a note"
+              handleChange={handleChange}
+              handleBlur={() => handleBlur(noteValue, note)}
+            />
+          </div>
+          <div className="flex justify-between mt-4 items-center pb-3">
+            <div className="text-base font-bold text-gray-500">
+              {activeTransactions?.length} Transaction
+              {activeTransactions?.length === 1 ? '' : 's'}
+            </div>
+            <div>
+              <AddTransactionButton
+                context={{ budget }}
+                className="flex items-center"
+                small
+              >
+                Add New
+              </AddTransactionButton>
+            </div>
+          </div>
+          {activeTransactions?.length ? (
+            <div className="border-t border-gray-300">
+              {activeTransactions?.map((transactionItem, index) => (
+                <TransactionItem
+                  context={{ budget }}
+                  key={index}
+                  item={transactionItem}
+                />
+              ))}
+            </div>
+          ) : (
+            <></>
+          )}
+        </>
       )}
     </div>
   );

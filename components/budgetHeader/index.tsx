@@ -78,8 +78,6 @@ export const BudgetHeader = () => {
 
   const { toggleTransactionMenu } = useTransactionMenu();
 
-  // const [budgets, setbudgets] = useState(second)
-
   const toggleEnvelopes = () => {
     // setOpenEnvelopes(!openEnvelopes);
     if (closedEnvelopes?.length === categories?.length + 1) {
@@ -92,22 +90,47 @@ export const BudgetHeader = () => {
       setActiveItem(null);
     }
   };
-
+  // console.log({ budget });
   const totalPlanned =
-    budget?.transactions?.reduce((total, t) => total + t.total, 0) || 0;
+    budget?.incomes?.reduce((total, t) => total + t.planned, 0) || 0;
+
+  const totalBudgeted =
+    budget?.categories?.reduce(
+      (envelopeTotal, e) =>
+        envelopeTotal +
+        e.budgetItems.reduce(
+          (budgetItemTotal, budgetItem) =>
+            budgetItemTotal + budgetItem.plannedAmount,
+          0
+        ),
+      0
+    ) || 0;
+
+  const everyDollar = totalPlanned === totalBudgeted;
 
   return (
     <div className="budgetHeader sticky top-0 py-6 bg-gray-50 w-full border-b border-gray-300 z-50">
       <span className="block absolute top-0 bottom-0 bg-gray-50 w-6 -left-6"></span>
       <div className="grid grid-cols-3">
         <div className="col-span-2">
-          <h2 className="text-3xl">[DATE PICKER]</h2>
-          <p className="text-lg text-gray-500 mt-6">
-            <span className="font-bold text-black">
-              ${formatNumber(totalPlanned)}
-            </span>{' '}
-            left to budget
-          </p>
+          <h2 className="text-3xl mb-6">[BUDGET PICKER GOES HERE]</h2>
+          {everyDollar ? (
+            <p className="text-green-400 font-bold">
+              It's an EveryDollar Budget!
+            </p>
+          ) : (
+            <>
+              <p className={`text-lg text-gray-500`}>
+                <span className="font-bold text-black">
+                  ${formatNumber(totalPlanned - totalBudgeted)}
+                </span>{' '}
+                left to budget
+              </p>
+              <p className="text-sm italic">
+                Total Planned Income - Total Budgeted Envelopes
+              </p>
+            </>
+          )}
         </div>
         <div className="sticky top-0 bg-gray-50 p-6 pr-0 pt-0">
           <ul className="flex items-center justify-end">
