@@ -11,6 +11,7 @@ import { DeleteIncome } from '../deleteIncome';
 import { BudgetContext } from '../budgetProvider';
 import { useSidebar } from '../sidebarStateProvider';
 import { IncomingMessage } from 'http';
+import { useTransactionMenu } from '../transactionMenuProvider';
 
 export const UPDATE_INCOME_MUTATION = gql`
   mutation (
@@ -45,6 +46,7 @@ export const Paycheck = ({
   dragHandleProps = {},
 }) => {
   const { activeItem, setActiveItem } = useSidebar();
+  const { closeMenu } = useTransactionMenu();
   const [updateIncome, { data, loading, error }] = useMutation(
     UPDATE_INCOME_MUTATION
   );
@@ -66,6 +68,7 @@ export const Paycheck = ({
         return;
       }
     }
+    closeMenu();
     setActiveItem(income);
   };
   const handleBlur = async (newValue, oldValue) => {
