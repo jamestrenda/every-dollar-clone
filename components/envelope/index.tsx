@@ -296,8 +296,8 @@ export const Envelope = ({
                 {type.length ? (
                   'Received'
                 ) : (
-                  <span className="flex items-center justify-end cursor-pointer relative">
-                    <span className="">
+                  <span className="flex items-center justify-end cursor-pointer relative w-[70px] sm:w-auto ml-auto">
+                    <span className="overflow-ellipsis overflow-hidden">
                       {showSpent ? 'Spent' : 'Remaining'}
                     </span>
                     <StyledDropDown
