@@ -13,6 +13,7 @@ import { NextPage } from 'next';
 import { TransactionMenuStateProvider } from '../components/transactionMenuProvider';
 import { SidebarStateProvider } from '../components/sidebarStateProvider';
 import { PageSpinner } from '../components/pageSpinner';
+import { MenuStateProvider } from '../components/menuStateProvider';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -33,13 +34,15 @@ function MyApp({
   return (
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
-        <ModalStateProvider>
-          <TransactionMenuStateProvider>
-            <SidebarStateProvider>
-              {getLayout(<Component {...pageProps} />)}
-            </SidebarStateProvider>
-          </TransactionMenuStateProvider>
-        </ModalStateProvider>
+        <MenuStateProvider>
+          <ModalStateProvider>
+            <TransactionMenuStateProvider>
+              <SidebarStateProvider>
+                {getLayout(<Component {...pageProps} />)}
+              </SidebarStateProvider>
+            </TransactionMenuStateProvider>
+          </ModalStateProvider>
+        </MenuStateProvider>
       </ApolloProvider>
     </SessionProvider>
   );
