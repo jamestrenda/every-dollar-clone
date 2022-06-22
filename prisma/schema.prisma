@@ -10,6 +10,128 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Budget {
+  id           Int           @id @default(autoincrement())
+  incomes      Income[]
+  categories   Category[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime      @default(now())
+  month        String
+  year         String
+  transactions Transaction[]
+  debts        Debt[]
+  // favorites    Favorite[]
+
+  @@unique([id, userId])
+}
+
+model Transaction {
+  id               Int               @id @default(autoincrement())
+  description      String
+  total            Int
+  note             String?
+  checkNo          String?
+  transactionItems TransactionItem[]
+  budget           Budget?           @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId         Int?
+  active           Boolean           @default(true)
+  date             DateTime          @default(now())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  userId           Int
+  user             User              @relation(fields: [userId], references: [id])
+}
+
+model TransactionItem {
+  id            Int         @id @default(autoincrement())
+  amount        Int
+  budgetItem    BudgetItem? @relation(fields: [budgetItemId], references: [id], onDelete: SetNull)
+  budgetItemId  Int?
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  transactionId Int
+  income        Income?     @relation(fields: [incomeId], references: [id], onDelete: SetNull)
+  incomeId      Int?
+  debt          Debt?       @relation(fields: [debtId], references: [id], onDelete: SetNull)
+  debtId        Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([id, transactionId])
+}
+
+model Income {
+  id           Int               @id @default(autoincrement())
+  index        Int
+  source       String
+  planned      Int               @default(0)
+  note         String?
+  budget       Budget            @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId     Int
+  transactions TransactionItem[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Debt {
+  id             Int               @id @default(autoincrement())
+  index          Int
+  name           String
+  plannedAmount  Int               @default(0)
+  note           String?
+  balance        Int               @default(0)
+  minimumPayment Int               @default(0)
+  budget         Budget            @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId       Int
+  dueDate        DateTime?
+  transactions   TransactionItem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  isFavorite     Boolean           @default(false)
+  // favorite       Favorite?         @relation(fields: [favoriteId], references: [id])
+  // favoriteId     String?           @unique
+}
+
+model BudgetItem {
+  id               Int               @id @default(autoincrement())
+  index            Int // for sorting within categories
+  name             String
+  plannedAmount    Int               @default(0)
+  note             String?
+  dueDate          DateTime?
+  parentCategory   Category          @relation(fields: [parentCategoryId], references: [id], onDelete: Cascade)
+  parentCategoryId Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  transactions     TransactionItem[]
+  isFavorite       Boolean           @default(false)
+  // favorite         Favorite?         @relation(fields: [favoriteId], references: [id])
+  // favoriteId       String?           @unique
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  index       Int
+  name        String
+  budget      Budget       @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  budgetId    Int
+  budgetItems BudgetItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // no category can have the same index within a given budget
+  // @@unique([index, budgetId])
+}
+
+// model Favorite {
+//   id         Int         @id @default(autoincrement())
+//   budget     Budget      @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+//   budgetId   Int
+//   budgetItem BudgetItem?
+//   debt       Debt?
+// }
+
 model Account {
   id                 String    @id @default(cuid())
   userId             Int
@@ -36,23 +158,25 @@ model Account {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  firstName        String?   @map("first_name")
-  lastName         String?   @map("last_name")
+  id               Int           @id @default(autoincrement())
+  firstName        String?       @map("first_name")
+  lastName         String?       @map("last_name")
   name             String?
-  email            String?   @unique
-  emailVerified    DateTime? @map("email_verified")
+  email            String?       @unique
+  emailVerified    DateTime?     @map("email_verified")
   password         String?
   image            String?
-  createdAt        DateTime  @default(now()) @map(name: "created_at")
-  updatedAt        DateTime  @updatedAt @map(name: "updated_at")
-  role             Role      @default(USER)
-  isAdmin          Boolean   @default(false) @map("is_admin")
-  onboarded        Boolean   @default(false)
-  resetToken       String?   @db.Text
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
+  role             Role          @default(USER)
+  isAdmin          Boolean       @default(false) @map("is_admin")
+  onboarded        Boolean       @default(false)
+  resetToken       String?       @db.Text
   resetTokenExpiry Int?
+  budgets          Budget[]
+  accounts         Account[]
+  transactions     Transaction[]
 
-  accounts Account[]
   @@index([firstName, lastName], name: "full_name")
   @@map(name: "users")
 }

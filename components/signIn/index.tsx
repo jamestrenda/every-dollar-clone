@@ -11,6 +11,7 @@ import { TextDivider } from '../divider/text';
 import { Notice } from '../notice';
 import { Spinner } from '../spinner';
 import { useModal } from '../modalStateProvider';
+import { PageSpinner } from '../pageSpinner';
 
 export const StyledProviderButton = styled.button`
   ${tw`bg-white shadow-sm rounded-md border-solid border border-gray-200 appearance-none h-10 w-10 grid place-items-center hover:bg-indigo-500 hover:text-white transition`}
@@ -28,6 +29,7 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
   const [errors, setErrors] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     const { error } = query;
@@ -43,6 +45,14 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
     } else {
     }
   }, [query]);
+
+  // useEffect(() => {
+  //   console.log({ signingIn });
+  //   if (signingIn) {
+  //     console.log('pushing to budget');
+  //     push('/budget');
+  //   }
+  // }, [signingIn]);
 
   const handleEmail = async (e) => {
     e.preventDefault();
@@ -75,9 +85,17 @@ export default function SignIn({ csrfToken }: { csrfToken: string }) {
       setErrors(null);
       resetForm();
       closeModal();
-      if (res.ok) push('/account');
+
+      if (res.ok) {
+        // console.log('setting signingIn');
+        // setSigningIn(true);
+        // console.log(res.ok, { signingIn });
+        // push('/budget');
+      }
     }
   };
+
+  if (signingIn) return <PageSpinner />;
   return (
     <div className="max-w-md mx-auto w-full">
       {errors && <Notice type="error" message={errors} />}

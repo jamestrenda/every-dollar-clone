@@ -1,4 +1,14 @@
 export * from './Account';
+export * from './Budget';
 export * from './Date';
+export * from './BudgetItem';
+export * from './BudgetItemIndexInput';
+export * from './Category';
+export * from './Debt';
+// export * from './Favorite';
 export * from './Message';
+export * from './Income';
+export * from './Transaction';
+export * from './TransactionItem';
+export * from './TransactionItemUpsertInput';
 export * from './User';

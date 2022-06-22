@@ -21,8 +21,77 @@ type Account {
   userId: Int!
 }
 
+type Budget {
+  categories: [Category]
+  createdAt: DateTime
+  debts: [Debt]
+  id: Int
+  incomes: [Income]
+  month: String
+  transactions: [Transaction]
+  updatedAt: DateTime
+  user: User!
+  userId: Int
+  year: String
+}
+
+type BudgetItem {
+  dueDate: DateTime
+  id: Int!
+  index: Int!
+  isFavorite: Boolean!
+  name: String!
+  note: String
+  parentCategory: Category!
+  parentCategoryId: Int!
+  plannedAmount: Int!
+  transactions: [TransactionItem!]
+}
+
+input BudgetItemIndexInput {
+  id: Int!
+  index: Int!
+}
+
+type Category {
+  budget: Budget!
+  budgetId: Int!
+  budgetItems: [BudgetItem!]
+  id: Int!
+  index: Int!
+  name: String!
+}
+
 """Date custom scalar type"""
 scalar DateTime
+
+type Debt {
+  balance: Int!
+  budget: Budget!
+  budgetId: Int!
+  createdAt: DateTime
+  dueDate: DateTime
+  id: Int!
+  index: Int!
+  isFavorite: Boolean!
+  minimumPayment: Int!
+  name: String!
+  note: String
+  plannedAmount: Int!
+  transactions: [TransactionItem!]
+  updatedAt: DateTime
+}
+
+type Income {
+  budget: Budget!
+  budgetId: Int!
+  id: Int!
+  index: Int!
+  note: String
+  planned: Int!
+  source: String!
+  transactions: [TransactionItem!]
+}
 
 type Message {
   error: Boolean
@@ -30,18 +99,112 @@ type Message {
 }
 
 type Mutation {
+  createBudget(userId: Int!): Budget
+  createBudgetItem(index: Int!, parentCategoryId: Int!): BudgetItem!
+  createCategory(budgetId: Int!): Category!
+  createDebt(budgetId: Int!, index: Int!): Debt!
+  createIncome(budgetId: Int!, index: Int!): Income!
+  createTransaction(budgetId: Int!, checkNo: String, date: DateTime!, description: String!, note: String, total: Int!, transactionItems: [TransactionItemUpsertInput!]!, userId: Int!): Transaction
+  deleteBudget(id: Int!): Budget
+  deleteBudgetItem(budgetId: Int!, id: Int!, parentCategoryId: Int!): BudgetItem!
+  deleteCategory(budgetId: Int!, id: Int!): Category!
+  deleteDebt(id: Int!): Debt!
+  deleteIncome(budgetId: Int!, id: Int!): Income!
+  deleteTransaction(id: Int!): Transaction
+  deleteUser(id: Int!): User!
   requestReset(email: String!): Message
+  resetBudget(id: Int!): Budget
   resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
+  restoreTransaction(id: Int!): Transaction
+  softDeleteTransaction(id: Int!): Transaction
+  updateBudgetItem(dueDate: DateTime, id: Int!, isFavorite: Boolean, name: String, note: String, plannedAmount: Int): BudgetItem!
+  updateBudgetItemIndexes(data: [BudgetItemIndexInput!]!): BudgetItem!
+  updateCategoryIndexes(data: [BudgetItemIndexInput!]!): Category!
+  updateCategoryName(id: Int!, name: String!): Category!
+  updateDebt(balance: Int!, dueDate: DateTime, id: Int!, isFavorite: Boolean!, minimumPayment: Int!, name: String, note: String, plannedAmount: Int): Debt!
+  updateDebtIndexes(data: [BudgetItemIndexInput!]!): Debt!
+  updateIncome(id: Int!, index: Int, note: String, planned: Int, source: String): Income!
+  updateIncomeIndexes(data: [BudgetItemIndexInput!]!): Income!
+  updateTransaction(budgetId: Int, checkNo: String, date: DateTime!, description: String!, id: Int!, note: String, total: Int!, transactionItems: [TransactionItemUpsertInput!]!): Transaction
 }
 
 type Query {
   account(id: Int!): Account
   accounts: [Account!]
+  budget(month: String, userId: Int, year: String): Budget
+  budgetItem(id: Int!): BudgetItem
+  budgetItemTransactions(id: Int!): [TransactionItem!]
+  budgetItems: [BudgetItem!]
+  budgets: [Budget!]
+  categories: [Category!]
+  category(id: Int!): Category
+  debt(id: Int!): Debt
+  debts: [Debt!]
+  income(id: Int!): Income
+  incomes: [Income!]
+  transaction(id: Int!): Transaction!
+  transactionItem(id: Int!): TransactionItem
+  transactionItems: [TransactionItem!]
   user(id: Int!): User!
+  userTransactions(id: Int!): User!
+}
+
+"""
+A Transaction will have one or more TransactionItems. The total field should be the sum of the TransactionItem amount fields.
+"""
+type Transaction {
+  active: Boolean!
+  budget: Budget!
+  budgetId: Int!
+  checkNo: String
+  date: DateTime!
+  description: String!
+  id: Int!
+  note: String
+  total: Int!
+  transactionItems: [TransactionItem]!
+  updatedAt: DateTime
+  user: User!
+  userId: Int!
+}
+
+"""
+A TransactionItem is a child of the Transaction type. TransactionItems can have siblings, meaning that multiple TransactionItems may have an identical Transaction parent. A TransactionItem will either connect to one BudgetItem or one Income, but not both. Since they cannot both be required, they must both be optional fields.
+"""
+type TransactionItem {
+  amount: Int!
+
+  """
+  A BudgetItem represents a line item under the Category type. A BudgetItem will have zero or more TranscactionItems.
+  """
+  budgetItem: BudgetItem
+  budgetItemId: Int
+  createdAt: DateTime
+
+  """Debt will have zero or more TranscactionItems."""
+  debt: Debt
+  debtId: Int
+  id: Int!
+
+  """Income will have zero or more TranscactionItems."""
+  income: Income
+  incomeId: Int
+  transaction: Transaction!
+  transactionId: Int!
+  updatedAt: DateTime
+}
+
+input TransactionItemUpsertInput {
+  amount: Int!
+  budgetItemId: Int
+  debtId: Int
+  id: Int!
+  incomeId: Int
 }
 
 type User {
   accounts: [Account]
+  budgets: [Budget]
   createdAt: DateTime!
   email: String!
   emailVerified: DateTime
@@ -51,8 +214,7 @@ type User {
   isAdmin: Boolean!
   lastName: String!
   onboarded: Boolean!
-  resetToken: String
-  resetTokenExpiry: Int
   role: String!
+  transactions: [Transaction]
   updatedAt: DateTime!
 }
