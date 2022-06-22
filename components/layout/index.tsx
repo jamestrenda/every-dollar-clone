@@ -11,7 +11,17 @@ import { BudgetProvider } from '../budgetProvider';
 import { useTransactionMenu } from '../transactionMenuProvider';
 import { useSidebar } from '../sidebarStateProvider';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useMenu } from '../menuStateProvider';
+
+export const StyledPage = styled.div`
+  &::before {
+    content: '';
+    height: 0;
+    ${tw`absolute top-0 bottom-0 left-0 right-0 z-[999] !pointer-events-none opacity-0 transition-opacity bg-black bg-opacity-20`};
+    ${({ menuOpen }) => menuOpen && tw`opacity-100 h-[9999px]`}
+  }
+`;
 
 export function Loading({ status }) {
   const router = useRouter();
@@ -48,9 +58,9 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Layout = ({ children }) => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { asPath, push } = useRouter();
-
+  const { open: menuOpen, closeMenu } = useMenu();
   const [loading, setLoading] = useState(false);
   const loadingSession = status === 'loading';
   const authenticated = status === 'authenticated';
@@ -58,6 +68,9 @@ const Layout = ({ children }) => {
   const { setActiveItem } = useSidebar();
   const { modal } = useModal();
   const { open } = useTransactionMenu();
+
+  // TODO: I can't remember if i'm atually using this effect or not...
+  //       if memory serves, it's not actually doing anything
   useEffect(() => {
     const handleStart = () => setLoading(true);
     const handleComplete = () => setLoading(false);
@@ -72,6 +85,14 @@ const Layout = ({ children }) => {
       router.events.off('routeChangeError', handleComplete);
     };
   }, [asPath]);
+
+  useEffect(() => {
+    function handleResize() {
+      if (menuOpen) closeMenu();
+    }
+
+    window.addEventListener('resize', handleResize);
+  });
 
   const handleClick = ({ target }) => {
     const overviewSection = target.closest('.sidebar__itemOverview');
@@ -104,11 +125,18 @@ const Layout = ({ children }) => {
         <PageSpinner />
       ) : authenticated ? (
         <div
-          className="flex max-h-screen overflow-hidden"
+          className={`flex max-h-screen overflow-hidden`}
           onClick={handleClick}
         >
           <Header />
-          <main className="relative flex-grow bg-gray-50 px-4 lg:px-12 overflow-y-scroll overflow-x-hidden">
+          <StyledPage
+            menuOpen={menuOpen}
+            className={`${
+              menuOpen
+                ? 'overflow-hidden pointer-events-none'
+                : 'overflow-y-scroll overflow-x-hidden'
+            } relative flex-grow bg-gray-50 px-4 lg:px-12 `}
+          >
             {loading ? (
               <PageSpinner />
             ) : (
@@ -132,7 +160,7 @@ const Layout = ({ children }) => {
                 </m.div>
               </LazyMotion>
             )}
-          </main>
+          </StyledPage>
         </div>
       ) : (
         <LazyMotion features={domAnimation}>
