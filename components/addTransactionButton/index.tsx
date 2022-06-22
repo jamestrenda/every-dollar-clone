@@ -49,7 +49,7 @@ export const AddTransactionButton = ({
       <BsFillPlusCircleFill
         className={`${
           small ? 'h-5 w-5' : 'h-10 w-10'
-        } text-indigo-500 transition ring-indigo-300 rounded-full group-hover:ring `}
+        } text-indigo-500 transition ring-indigo-300 rounded-full group-hover:ring bg-white`}
       />
       <span className="ml-2 uppercase font-bold text-xs">{children}</span>
     </button>
