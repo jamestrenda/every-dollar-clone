@@ -1,73 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AiFillPlusCircle } from 'react-icons/ai';
 import {
-  FaAlignRight,
   FaEnvelope,
   FaFolder,
   FaRegEnvelopeOpen,
+  FaRegTrashAlt,
 } from 'react-icons/fa';
-import {
-  IoAdd,
-  IoEllipsisHorizontal,
-  IoEllipsisVerticalSharp,
-} from 'react-icons/io5';
-import styled from 'styled-components';
-import tw from 'twin.macro';
+import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { GrTransaction } from 'react-icons/gr';
 import formatNumber from '../../lib/formatNumber';
-import { BudgetConsumer, BudgetContext } from '../budgetProvider';
+import { BudgetContext } from '../budgetProvider';
 // import { ToolTip } from '../toolTip';
 import { useTransactionMenu } from '../transactionMenuProvider';
 import { useSidebar } from '../sidebarStateProvider';
-
-const StyledTransactionsToggleButton = styled.button`
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    ${tw`bg-gray-200 transition h-12 w-12 rounded-full`}
-    opacity: 0;
-    pointer-events: none;
-  }
-  &:hover {
-    ${tw`text-indigo-500`};
-    &::before {
-      opacity: 1;
-    }
-    path {
-      stroke: currentColor;
-    }
-  }
-`;
-
-const StyledEllipseButton = styled.button`
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    ${tw`bg-gray-200 transition h-12 w-12 rounded-full`}
-    opacity: 0;
-    pointer-events: none;
-  }
-  &:hover {
-    ${tw`text-indigo-500`};
-    &::before {
-      opacity: 1;
-    }
-  }
-`;
+import { StyledEllipseButton, StyledTransactionsToggleButton } from './styles';
+import { useMutation } from '@apollo/client';
+import { DELETE_BUDGET_MUTATION } from './mutations';
+import { Button } from '../button';
+import { formatDate } from '../../lib/formatDate';
+import { useModal } from '../modalStateProvider';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 export const BudgetHeader = () => {
   const {
@@ -80,14 +33,54 @@ export const BudgetHeader = () => {
     },
   } = useContext(BudgetContext);
   const { setActiveItem } = useSidebar();
-
+  const { setModal } = useModal();
+  const { push } = useRouter();
+  const {
+    data: { session },
+  } = useSession();
   // TODO: set up for next two months
   // TODO: have a "dream" budget option as well
 
   const [dates, setDates] = useState();
   const [dateFocused, setDateFocused] = useState(false); // for react-dates date picker
 
+  const [openUtilityMenu, setOpenUtilityMenu] = useState(false); // for react-dates date picker
+
   const { toggleTransactionMenu } = useTransactionMenu();
+
+  const [
+    deleteBudget,
+    { loading: deleteBudgetLoading, error: deleteBudgetError },
+  ] = useMutation(DELETE_BUDGET_MUTATION);
+
+  const handleDeleteBudget = async (id) => {
+    const res = await deleteBudget({
+      variables: { id },
+      update(cache) {
+        cache.modify({
+          id: cache.identify({
+            __typename: 'User',
+            id: session?.user.id,
+          }),
+          fields: {
+            budgets(existingBudgetRef, { readField }) {
+              return existingBudgetRef.filter(
+                (budgetRef) => id !== readField('id', budgetRef)
+              );
+            },
+          },
+          optimistic: true,
+        });
+        cache.evict({
+          id: cache.identify({
+            __typename: 'Budget',
+            id: id,
+          }),
+        });
+        cache.gc();
+      },
+    });
+  };
 
   const toggleEnvelopes = () => {
     // setOpenEnvelopes(!openEnvelopes);
@@ -101,6 +94,11 @@ export const BudgetHeader = () => {
       setActiveItem(null);
     }
   };
+
+  const toggleUtilityMenu = () => {
+    setOpenUtilityMenu(!openUtilityMenu);
+  };
+
   const totalPlanned =
     budget?.incomes?.reduce((total, t) => total + t.planned, 0) || 0;
 
@@ -188,13 +186,41 @@ export const BudgetHeader = () => {
                 {/* <ToolTip tip="Show Transactions" position="bottom" /> */}
               </StyledTransactionsToggleButton>
             </li>
-            <li className="grid place-items-center">
+            <li className="grid place-items-center relative">
               <StyledEllipseButton
                 type="button"
                 className="p-3 group transition"
+                onClick={toggleUtilityMenu}
               >
                 <IoEllipsisHorizontal className="h-6 w-7 group-hover:text-indigo-500" />
               </StyledEllipseButton>
+              <div
+                className={`${
+                  openUtilityMenu ? '' : 'opacity-0'
+                } absolute top-full shadow-md bg-white rounded-md transition-all right-0 mt-4`}
+              >
+                <div className="flex items-center p-4 text-red-500 whitespace-nowrap transition-all hover:rounded-md hover:bg-red-500 hover:text-white">
+                  <FaRegTrashAlt />
+                  <button
+                    className="ml-2"
+                    onClick={() =>
+                      setModal({
+                        title: `Delete ${formatDate(
+                          budget.month,
+                          'MMMM'
+                        )}'s Budget?`,
+                        btnText: 'Yes, delete it.',
+                        message: 'This action cannot be undone.',
+                        visible: true,
+                        callback: () => handleDeleteBudget(budget.id),
+                        type: 'delete',
+                      })
+                    }
+                  >
+                    Delete Budget
+                  </button>
+                </div>
+              </div>
             </li>
           </ul>
         </div>

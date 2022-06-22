@@ -20,7 +20,7 @@ import {
   CREATE_BUDGET_MUTATION,
   UPDATE_CATEGORY_INDEXES_MUTATION,
 } from './mutations';
-import { DELETE_BUDGET_MUTATION, SINGLE_BUDGET_QUERY } from './queries';
+import { SINGLE_BUDGET_QUERY } from './queries';
 
 export const Budget = () => {
   const { data: session, status } = useSession();
@@ -38,7 +38,7 @@ export const Budget = () => {
 
   const { data, loading, error } = useQuery(SINGLE_BUDGET_QUERY, {
     variables: {
-      userId: session.user.id,
+      userId: session?.user.id,
       month: formatDate(currentDate, 'M'),
       year: currentYear,
     },
@@ -73,41 +73,11 @@ export const Budget = () => {
       },
     ],
   });
-  const [
-    deleteBudget,
-    { loading: deleteBudgetLoading, error: deleteBudgetError },
-  ] = useMutation(DELETE_BUDGET_MUTATION);
+
   const [updateCategoryIndexes, { data: budgetItemIndexData }] = useMutation(
     UPDATE_CATEGORY_INDEXES_MUTATION
   );
-  const handleDeleteBudget = async (id) => {
-    await deleteBudget({
-      variables: { id },
-      update(cache) {
-        cache.modify({
-          id: cache.identify({
-            __typename: 'User',
-            id: session.user.id,
-          }),
-          fields: {
-            budgets(existingBudgetRef, { readField }) {
-              return existingBudgetRef.filter(
-                (budgetRef) => id !== readField('id', budgetRef)
-              );
-            },
-          },
-          optimistic: true,
-        });
-        cache.evict({
-          id: cache.identify({
-            __typename: 'Budget',
-            id: id,
-          }),
-        });
-        cache.gc();
-      },
-    });
-  };
+
   const updateItemIndexes = (items) => {
     return items.map((item, i) => {
       const updatedItem = { ...item };
@@ -246,9 +216,6 @@ export const Budget = () => {
                 </Droppable>
               </DragDropContext>
               <CreateEnvelope id={budget.id} />
-              {/* <Button onClick={() => handleDeleteBudget(activeBudgetId)}>
-                Delete Budget
-              </Button> */}
             </div>
             <BudgetFooter />
           </div>
