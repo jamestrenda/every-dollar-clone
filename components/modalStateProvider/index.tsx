@@ -4,10 +4,11 @@ const LocalStateContext = createContext(null);
 interface IModalProps {
   visible: boolean;
   title?: string;
-  message: string;
+  message: string | ReactNode;
   btnText?: string;
   callback?: void | null;
   type: 'info' | 'error' | 'success' | 'warning' | 'transaction';
+  icon?: ReactNode | undefined;
 }
 
 const ModalStateProvider = ({ children }: { children: ReactNode }) => {

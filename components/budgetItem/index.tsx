@@ -156,7 +156,10 @@ export const BudgetItem = ({
             className={`text-right grid items-center cursor-default ${
               showSpent && spent <= item.plannedAmount ? 'text-green-400' : ''
             } ${spent > item.plannedAmount ? '!text-red-400' : ''}`}
-            onClick={toggleSpent}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSpent();
+            }}
           >
             ${formatNumber(showSpent ? spent : remaining)}
           </span>

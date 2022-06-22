@@ -113,6 +113,7 @@ type Mutation {
   deleteTransaction(id: Int!): Transaction
   deleteUser(id: Int!): User!
   requestReset(email: String!): Message
+  resetBudget(id: Int!): Budget
   resetPassword(confirmPassword: String!, password: String!, resetToken: String!): Message
   restoreTransaction(id: Int!): Transaction
   softDeleteTransaction(id: Int!): Transaction

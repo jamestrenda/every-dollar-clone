@@ -466,3 +466,86 @@ export const DELETE_BUDGET_MUTATION = mutationField('deleteBudget', {
     });
   },
 });
+
+export const RESET_BUDGET_MUTATION = mutationField('resetBudget', {
+  type: Budget,
+  args: { id: nonNull(intArg()) },
+  async resolve(_parent, args, ctx) {
+    // 1. find all transactions
+    const transactions = await ctx.prisma.transaction.findMany({
+      where: {
+        budgetId: args.id,
+      },
+      select: {
+        id: true,
+        transactionItems: true,
+        budget: true,
+      },
+    });
+    // 2. disconnect them from their categories
+    const disconnectTransactionItems = transactions.map((transaction) =>
+      transaction.transactionItems.map(
+        async (transactionItem) =>
+          await ctx.prisma.transactionItem.update({
+            where: { id: transactionItem.id },
+            data: {
+              budgetItem: {
+                disconnect: true,
+              },
+              income: {
+                disconnect: true,
+              },
+              debt: {
+                disconnect: true,
+              },
+            },
+          })
+      )
+    );
+
+    // 3. get categories and reset their data
+    const categories = await ctx.prisma.category.findMany({
+      where: {
+        budgetId: args.id,
+      },
+      select: {
+        id: true,
+        budgetItems: true,
+      },
+    });
+
+    // 3.1 - only reset the planned amounts for BudgetItems, Incomes, and Debts
+    //       everything else gets preserved as is
+    const resetPlannedAmounts = categories.map((category) =>
+      category.budgetItems?.map(
+        async (budgetItem) =>
+          await ctx.prisma.budgetItem.update({
+            where: { id: budgetItem.id },
+            data: {
+              plannedAmount: 0,
+            },
+          })
+      )
+    );
+
+    const resetIncomes = await ctx.prisma.income.updateMany({
+      where: {
+        budgetId: args.id,
+      },
+      data: {
+        planned: 0,
+      },
+    });
+    // TODO: we'll come back to this once they're added to the front end
+    //  const resetDebt = await ctx.prisma.debt.updateMany({
+    //    where: {
+    //      budgetId: args.id,
+    //    },
+    //    data: {
+    //      planned: 0,
+    //    },
+    //  });
+
+    return transactions[0].budget;
+  },
+});

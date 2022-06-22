@@ -23,6 +23,7 @@ import { StyledDropDown } from './styles';
 import toast from 'react-hot-toast';
 import { StyledButton, StyledToast } from '../transactionItem/styles';
 import { BiUndo } from 'react-icons/bi';
+import notLiveNotice from '../../lib/notLiveNotice';
 
 export const EnvelopeFooter = ({ type }) => {
   const {
@@ -127,7 +128,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Sort By Name</span>
                 </span>
               }
-              onClick={() => alert('feature not live yet.')}
+              onClick={() => notLiveNotice()}
             />
             <Dropdown.Item
               className="group"
@@ -138,7 +139,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Sort By Planned</span>
                 </span>
               }
-              onClick={() => alert('feature not live yet.')}
+              onClick={() => notLiveNotice()}
             />
 
             <Dropdown.Item
@@ -149,7 +150,7 @@ export const EnvelopeFooter = ({ type }) => {
                   <span>Reset</span>
                 </span>
               }
-              onClick={() => alert('feature not live yet.')}
+              onClick={() => notLiveNotice()}
             />
             {!type.length && (
               <Dropdown.Item
