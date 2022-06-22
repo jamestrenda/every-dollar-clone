@@ -91,9 +91,7 @@ export default NextAuth({
       async authorize(credentials, req) {
         const { email, password } = credentials;
 
-        // console.log({ credentials });
         // 1. check if username/email exists
-
         const user = await prisma.user.findUnique({
           where: {
             email,
@@ -182,16 +180,6 @@ export default NextAuth({
           },
         });
 
-        // if (user) {
-        //   const token = await jwt.sign(
-        //     { jwt: user.id },
-        //     process.env.NEXTAUTH_SECRET
-        //   );
-
-        //   user['token'] = token;
-
-        //   return user;
-        // }
         // Return null if user data could not be retrieved
         return user || null;
       },
@@ -225,10 +213,14 @@ export default NextAuth({
     async session({ session, token }) {
       const { user } = token;
 
-      // delete user.password;
-      // delete user.createdAt;
-      // delete user.updatedAt;
-      // delete user.token;
+      // already deleting some of these inside the credentials provider above,
+      // but we should just delete them here so that they're not exposed
+      // when using other providers
+      delete user.createdAt;
+      delete user.updatedAt;
+      delete user.password;
+      delete user.resetToken;
+      delete user.resetTokenExpiry;
       return { ...session, user };
     },
     async jwt({ token, user, account, profile, isNewUser }) {
