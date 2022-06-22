@@ -1,16 +1,10 @@
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import toast from 'react-hot-toast';
 import { BiUndo } from 'react-icons/bi';
 import { RiFileShredLine } from 'react-icons/ri';
 import { formatDate } from '../../lib/formatDate';
 import formatNumber from '../../lib/formatNumber';
-import { SINGLE_BUDGET_QUERY } from '../budget/queries';
 import { useModal } from '../modalStateProvider';
-import { useSidebar } from '../sidebarStateProvider';
-import {
-  SINGLE_BUDGET_ITEM_QUERY,
-  SINGLE_INCOME_QUERY,
-} from '../sidebarStateProvider/queries';
 import {
   DELETED_TRANSACTION_MUTATION,
   RESTORE_DELETED_ITEM_MUTATION,
@@ -19,27 +13,20 @@ import {
 import { StyledButton, StyledToast } from './styles';
 
 export const TransactionItem = ({ item, deleted = false, context }) => {
-  const { activeItem, setActiveItem } = useSidebar();
   const { setModal } = useModal();
-  // console.log({ item });
-  const [softDeleteTransaction, { data, loading, error }] = useMutation(
-    SOFT_DELETE_MUTATION,
-    {
-      variables: { id: item.id },
-    }
-  );
-  const [
-    restoreTransaction,
-    { data: restoreData, loading: restoreLoading, error: restoreError },
-  ] = useMutation(RESTORE_DELETED_ITEM_MUTATION, {
-    variables: { id: item?.id },
+  console.log({ item });
+  const [softDeleteTransaction] = useMutation(SOFT_DELETE_MUTATION, {
+    variables: { id: item.transaction.id },
+  });
+  const [restoreTransaction] = useMutation(RESTORE_DELETED_ITEM_MUTATION, {
+    variables: { id: item?.transaction.id },
   });
 
   const [
     deleteTransaction,
     { data: deleteData, loading: deleteLoading, error: deleteError },
   ] = useMutation(DELETED_TRANSACTION_MUTATION, {
-    variables: { id: item.id },
+    variables: { id: item.transaction.id },
   });
 
   const isBudgetItem = item.budgetItem?.__typename === 'BudgetItem';
