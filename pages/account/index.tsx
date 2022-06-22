@@ -5,7 +5,7 @@ import tw from 'twin.macro';
 import { Button } from '../../components/button';
 import { useModal } from '../../components/modalStateProvider';
 import { Spinner } from '../../components/spinner';
-import { useRouter } from 'next/router';
+import { PageTitle } from '../../components/pageTitle';
 
 const DELETE_USER_MUTATION = gql`
   mutation DELETE_USER_MUTATION($id: Int!) {
@@ -43,30 +43,33 @@ export default function AccountPage() {
   });
 
   return status === 'authenticated' ? (
-    <div className="grid gap-5 p-8 h-full">
-      <div className="">
-        <h1 className="font-bold text-4xl mb-5">My Account</h1>
-        <p>(Other stuff goes )</p>
+    <>
+      <PageTitle title="Account" />
+      <div className="grid gap-5 p-8 h-full">
+        <div className="">
+          <h1 className="font-bold text-4xl mb-5">My Account</h1>
+          <p>(Other stuff goes )</p>
+        </div>
+        <div className="self-end">
+          <Button
+            type="button"
+            innerStyle={tw`bg-red-500 hover:bg-red-600 rounded-md py-2 px-4`}
+            onClick={() =>
+              setModal({
+                title: `Delete Account`,
+                btnText: 'Yes, delete it.',
+                message: html,
+                visible: true,
+                callback: handleDeleteUser,
+                type: 'delete',
+              })
+            }
+          >
+            Delete My Account
+          </Button>
+        </div>
       </div>
-      <div className="self-end">
-        <Button
-          type="button"
-          innerStyle={tw`bg-red-500 hover:bg-red-600 rounded-md py-2 px-4`}
-          onClick={() =>
-            setModal({
-              title: `Delete Account`,
-              btnText: 'Yes, delete it.',
-              message: html,
-              visible: true,
-              callback: handleDeleteUser,
-              type: 'delete',
-            })
-          }
-        >
-          Delete My Account
-        </Button>
-      </div>
-    </div>
+    </>
   ) : (
     <Spinner />
   );

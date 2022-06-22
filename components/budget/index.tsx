@@ -16,6 +16,7 @@ import { CreateEnvelope } from '../createEnvelope';
 import { Envelope } from '../envelope';
 import { Notice } from '../notice';
 import { PageSpinner } from '../pageSpinner';
+import { PageTitle } from '../pageTitle';
 import {
   CREATE_BUDGET_MUTATION,
   UPDATE_CATEGORY_INDEXES_MUTATION,
@@ -175,6 +176,7 @@ export const Budget = () => {
 
     return (
       <BudgetProvider value={ctx}>
+        <PageTitle title={`${currentMonth} Budget`} />
         <BudgetHeader />
         <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
           <div className="col-span-2">

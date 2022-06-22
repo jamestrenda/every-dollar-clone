@@ -11,8 +11,9 @@ import { BudgetProvider } from '../budgetProvider';
 import { useTransactionMenu } from '../transactionMenuProvider';
 import { useSidebar } from '../sidebarStateProvider';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMenu } from '../menuStateProvider';
+import { Meta } from '../meta';
 
 export const StyledPage = styled.div`
   &::before {
@@ -121,6 +122,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <GlobalStyles />
+      <Meta />
       {loadingSession ? (
         <PageSpinner />
       ) : authenticated ? (
