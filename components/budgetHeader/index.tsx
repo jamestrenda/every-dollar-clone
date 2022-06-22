@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AiFillPlusCircle } from 'react-icons/ai';
 import {
   FaAlignRight,
@@ -71,12 +71,18 @@ const StyledEllipseButton = styled.button`
 
 export const BudgetHeader = () => {
   const {
-    ctx: { categories, closedEnvelopes, setClosedEnvelopes, budget },
+    ctx: {
+      categories,
+      closedEnvelopes,
+      setClosedEnvelopes,
+      budget,
+      setEveryDollarBudget,
+    },
   } = useContext(BudgetContext);
-  // const [openEnvelopes, setOpenEnvelopes] = useState(false);
   const { setActiveItem } = useSidebar();
 
-  // set up two years of dates
+  // TODO: set up for next two months
+  // TODO: have a "dream" budget option as well
 
   const [dates, setDates] = useState();
   const [dateFocused, setDateFocused] = useState(false); // for react-dates date picker
@@ -95,7 +101,6 @@ export const BudgetHeader = () => {
       setActiveItem(null);
     }
   };
-  // console.log({ budget });
   const totalPlanned =
     budget?.incomes?.reduce((total, t) => total + t.planned, 0) || 0;
 
@@ -111,7 +116,15 @@ export const BudgetHeader = () => {
       0
     ) || 0;
 
-  const everyDollar = totalPlanned === totalBudgeted;
+  const everyDollar = totalPlanned && totalPlanned === totalBudgeted;
+
+  useEffect(() => {
+    if (everyDollar) {
+      setEveryDollarBudget(true);
+    } else {
+      setEveryDollarBudget(false);
+    }
+  }, [everyDollar]);
 
   return (
     <div className="budgetHeader sticky top-0 pt-0 pb-3 md:py-6 bg-gray-50 w-full border-b border-gray-300 z-50">

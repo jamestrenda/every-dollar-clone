@@ -34,6 +34,7 @@ export const Budget = () => {
   const [incomes, setIncomes] = useState([]);
   const [closedEnvelopes, setClosedEnvelopes] = useState([]);
   const [showSpent, setShowSpent] = useState(false);
+  const [everyDollarBudget, setEveryDollarBudget] = useState(false);
 
   const { data, loading, error } = useQuery(SINGLE_BUDGET_QUERY, {
     variables: {
@@ -198,6 +199,8 @@ export const Budget = () => {
       showSpent,
       setShowSpent,
       toggleSpent,
+      everyDollarBudget,
+      setEveryDollarBudget,
     };
 
     return (
